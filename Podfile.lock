@@ -17,6 +17,8 @@ PODS:
     - RxCocoa (~> 3.0)
     - RxSwift (~> 3.0)
   - RxSwift (3.1.0)
+  - SwiftDate (4.0.11)
+  - Then (2.1.0)
 
 DEPENDENCIES:
   - HandyJSON (~> 1.5.2)
@@ -26,6 +28,8 @@ DEPENDENCIES:
   - RxCocoa (~> 3.0)
   - RxDataSources (~> 1.0)
   - RxSwift (~> 3.0)
+  - SwiftDate (~> 4.0.11)
+  - Then (~> 2.1.0)
 
 SPEC CHECKSUMS:
   Alamofire: aa2e09d871c9160ac53c90e83c68064a94e3dfbe
@@ -36,7 +40,9 @@ SPEC CHECKSUMS:
   RxCocoa: 50d7564866da9299161e86a263ce12a0873904d8
   RxDataSources: 1de77880bf5b7fcee42102adcd5a5d65e5b81541
   RxSwift: 83ff553e7593fdfdcb2562933a64c0284dffdadc
+  SwiftDate: a36d5ce7c86bed3ed92b583ccbf15045f374ac65
+  Then: 8496793c8fcac95482b943909b440724c7d8d82c
 
-PODFILE CHECKSUM: d03e57f52417f947d93216d116e41f7842dd4679
+PODFILE CHECKSUM: 95a3f8b78273cf110be347ce36feb0493212aad9
 
-COCOAPODS: 1.1.1
+COCOAPODS: 1.2.0.rc.1

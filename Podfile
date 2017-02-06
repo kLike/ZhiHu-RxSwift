@@ -9,4 +9,6 @@ pod 'HandyJSON', '~> 1.5.2'
 pod 'RxSwift',    '~> 3.0'
 pod 'RxCocoa',    '~> 3.0'
 pod 'RxDataSources', '~> 1.0'
+pod 'Then', '~> 2.1.0'
+pod 'SwiftDate', '~> 4.0.11'
 end
