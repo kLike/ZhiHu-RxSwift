@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreImage
 
 let screenW: CGFloat = UIScreen.main.bounds.width
 let screenH: CGFloat = UIScreen.main.bounds.height

@@ -17,13 +17,14 @@ import Then
 
 class HomeViewController: UIViewController {
 
-    private let provider = RxMoyaProvider<ApiManager>()
+    let provider = RxMoyaProvider<ApiManager>()
     let dataSource = RxTableViewSectionedReloadDataSource<SectionModel<String, storyModel>>()
     let dispose = DisposeBag()
     let dataArr = Variable([SectionModel<String, storyModel>]())
     var newsDate = ""
     
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var bannerView: BannerView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -63,6 +64,10 @@ class HomeViewController: UIViewController {
             .subscribe(onNext: { (model) in
                 self.dataArr.value = [SectionModel(model: model.date!, items: model.stories!)]
                 self.newsDate = model.date!
+                var arr = model.top_stories!
+                arr.insert(arr.last!, at: 0)
+                arr.append(arr[1])
+                self.bannerView.imgUrlArr.value = arr
             })
             .addDisposableTo(dispose)
     }
@@ -100,12 +105,12 @@ extension HomeViewController: UITableViewDelegate {
                 $0.text = "\(date.month)月\(date.day)日 \(date.weekdayName)"
             }
         }
-        return UILabel()
+        return UIView()
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if section == 0 {
-            return 200
+            return 0
         }
         return 38
     }
@@ -114,6 +119,12 @@ extension HomeViewController: UITableViewDelegate {
         return 0.001
     }
     
+}
+
+extension HomeViewController: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        bannerView.offY.value = Double(scrollView.contentOffset.y)
+    }    
 }
 
 
