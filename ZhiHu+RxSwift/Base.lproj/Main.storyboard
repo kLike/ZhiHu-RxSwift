@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16C67" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16C67" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="UBg-MS-GQB">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -9,10 +9,26 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Home View Controller-->
+        <!--Navigation Controller-->
+        <scene sceneID="C9R-mT-zxV">
+            <objects>
+                <navigationController id="UBg-MS-GQB" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="qNf-Ve-ceV">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="qgZ-X9-GXF"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Ois-3U-Obk" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-756" y="139"/>
+        </scene>
+        <!--今日热闻-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="HomeViewController" customModule="ZhiHu_RxSwift" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController wantsFullScreenLayout="YES" id="BYZ-38-t0r" customClass="HomeViewController" customModule="ZhiHu_RxSwift" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
@@ -21,8 +37,9 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="90" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="F7l-iV-u5T">
+                            <tableView contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="90" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="F7l-iV-u5T">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                                 <inset key="separatorInset" minX="15" minY="0.0" maxX="15" maxY="0.0"/>
                                 <view key="tableHeaderView" contentMode="scaleToFill" id="sZe-uW-2Ps">
@@ -71,8 +88,16 @@
                                                 </collectionViewCell>
                                             </cells>
                                         </collectionView>
+                                        <pageControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="nVG-Wv-ONK">
+                                            <rect key="frame" x="0.0" y="163" width="375" height="37"/>
+                                        </pageControl>
                                     </subviews>
                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <constraints>
+                                        <constraint firstItem="nVG-Wv-ONK" firstAttribute="leading" secondItem="sZe-uW-2Ps" secondAttribute="leading" id="2PB-L8-Sci"/>
+                                        <constraint firstAttribute="bottom" secondItem="nVG-Wv-ONK" secondAttribute="bottom" id="SNp-PG-edG"/>
+                                        <constraint firstAttribute="trailing" secondItem="nVG-Wv-ONK" secondAttribute="trailing" id="Y6R-Nk-c3U"/>
+                                    </constraints>
                                 </view>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ListTableViewCell" rowHeight="90" id="JdP-Ne-y9E" customClass="ListTableViewCell" customModule="ZhiHu_RxSwift" customModuleProvider="target">
@@ -113,21 +138,25 @@
                             </tableView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <constraints>
-                            <constraint firstAttribute="trailing" secondItem="F7l-iV-u5T" secondAttribute="trailing" id="Mtn-5s-9Ll"/>
-                            <constraint firstItem="F7l-iV-u5T" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="cRC-bL-5MF"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="F7l-iV-u5T" secondAttribute="bottom" id="sWk-0s-8ok"/>
-                            <constraint firstItem="F7l-iV-u5T" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="vof-Ag-m2k"/>
-                        </constraints>
                     </view>
+                    <navigationItem key="navigationItem" title="今日热闻" id="mfo-FT-KzG">
+                        <barButtonItem key="leftBarButtonItem" image="menu" id="Hi8-xB-gM8">
+                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="bannerView" destination="sd2-32-OB5" id="zi0-fW-INs"/>
+                        <outlet property="menuBtn" destination="Hi8-xB-gM8" id="EuD-z9-DEi"/>
+                        <outlet property="pageControl" destination="nVG-Wv-ONK" id="TyW-Xt-VMs"/>
                         <outlet property="tableView" destination="F7l-iV-u5T" id="K7P-1a-3fa"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="20" y="138.98050974512745"/>
+            <point key="canvasLocation" x="16.800000000000001" y="138.98050974512745"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="menu" width="22" height="17"/>
+    </resources>
 </document>

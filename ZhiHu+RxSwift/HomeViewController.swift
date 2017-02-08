@@ -22,14 +22,19 @@ class HomeViewController: UIViewController {
     let dispose = DisposeBag()
     let dataArr = Variable([SectionModel<String, storyModel>]())
     var newsDate = ""
+    var barImg = UIView()
+    let titleNum = Variable(0)
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var bannerView: BannerView!
+    @IBOutlet weak var menuBtn: UIBarButtonItem!
+    @IBOutlet weak var pageControl: UIPageControl!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         loadData()
+        setBarUI()
         
         dataSource.configureCell = { (dataSource, tv, indexPath, model) in
             let cell = tv.dequeueReusableCell(withIdentifier: "ListTableViewCell") as! ListTableViewCell
@@ -55,7 +60,32 @@ class HomeViewController: UIViewController {
             .setDelegate(self)
             .addDisposableTo(dispose)
         
+        menuBtn.rx
+            .tap
+            .subscribe(onNext: {
+                print("tapMenu")
+            })
+            .addDisposableTo(dispose)
+        
+        titleNum
+            .asObservable()
+            .distinctUntilChanged()
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { (num) in
+                if num == 0 {
+                    self.title = "今日要闻"
+                } else {
+                    let date = try! DateInRegion.init(string: self.dataSource[num].model, format: DateFormat.custom("yyyyMMdd"))
+                    self.title = "\(date.month)月\(date.day)日 \(date.weekday.toWeekday())"
+                }
+            })
+            .addDisposableTo(dispose)
+        
     }
+    
+}
+
+extension HomeViewController {
     
     func loadData() {
         provider
@@ -68,6 +98,7 @@ class HomeViewController: UIViewController {
                 arr.insert(arr.last!, at: 0)
                 arr.append(arr[1])
                 self.bannerView.imgUrlArr.value = arr
+                self.pageControl.numberOfPages = model.top_stories!.count
             })
             .addDisposableTo(dispose)
     }
@@ -83,6 +114,17 @@ class HomeViewController: UIViewController {
             .addDisposableTo(dispose)
     }
     
+    func setBarUI() {
+        barImg = (navigationController?.navigationBar.subviews.first)!
+        barImg.alpha = 0
+        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
+        navigationController?.navigationBar.barTintColor = UIColor.rgb(63, 141, 208)
+        navigationController?.navigationBar.shadowImage = UIImage()
+        navigationController?.navigationBar.isTranslucent = false
+        tableView.frame = CGRect.init(x: 0, y: -64, width: screenW, height: screenH)
+        bannerView.bannerDelegate = self
+    }
+    
 }
 
 extension HomeViewController: UITableViewDelegate {
@@ -91,18 +133,21 @@ extension HomeViewController: UITableViewDelegate {
         if indexPath.section == dataArr.value.count - 1 && indexPath.row == 0 {
             loadMoreData()
         }
+        DispatchQueue.global().async {
+            self.titleNum.value = (tableView.indexPathsForVisibleRows?.reduce(Int.max) { (result, ind) -> Int in return min(result, ind.section) })!
+        }
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         if section > 0 {
             return UILabel().then {
                 $0.frame = CGRect.init(x: 0, y: 0, width: screenW, height: 38)
-                $0.backgroundColor = UIColor.rgb(63, g: 141, b: 208)
+                $0.backgroundColor = UIColor.rgb(63, 141, 208)
                 $0.textColor = UIColor.white
                 $0.font = UIFont.systemFont(ofSize: 15)
                 $0.textAlignment = .center
                 let date = try! DateInRegion.init(string: dataSource[section].model, format: DateFormat.custom("yyyyMMdd"))
-                $0.text = "\(date.month)月\(date.day)日 \(date.weekdayName)"
+                $0.text = "\(date.month)月\(date.day)日 \(date.weekday.toWeekday())"
             }
         }
         return UIView()
@@ -124,9 +169,19 @@ extension HomeViewController: UITableViewDelegate {
 extension HomeViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         bannerView.offY.value = Double(scrollView.contentOffset.y)
-    }    
+        barImg.alpha = (scrollView.contentOffset.y - 0) / 200
+    }
 }
 
+extension HomeViewController: BannerDelegate {
+    func selectedItem(model: storyModel) {
+        print(model)
+    }
+    
+    func scrollTo(index: Int) {
+        pageControl.currentPage = index
+    }
+}
 
 
 

@@ -17,8 +17,12 @@ class BannerView: UICollectionView {
     let imgUrlArr = Variable([storyModel]())
     let dispose = DisposeBag()
     var offY = Variable(0.0)
+    var bannerDelegate: BannerDelegate?
     
     override func awakeFromNib() {
+        
+        contentOffset.x = screenW
+
         imgUrlArr
             .asObservable()
             .bindTo(rx.items(cellIdentifier: "BannerCell", cellType: BannerCell.self)) {
@@ -41,7 +45,13 @@ class BannerView: UICollectionView {
             })
             .addDisposableTo(dispose)
         
-        contentOffset.x = screenW
+        rx
+            .modelSelected(storyModel.self)
+            .subscribe(onNext: { (model) in
+                self.bannerDelegate?.selectedItem(model: model)
+            })
+            .addDisposableTo(dispose)
+        
     }
 
 }
@@ -54,5 +64,13 @@ extension BannerView: UIScrollViewDelegate {
         else if scrollView.contentOffset.x == 0 {
             scrollView.contentOffset.x = CGFloat.init(imgUrlArr.value.count - 2) * screenW
         }
+        bannerDelegate?.scrollTo(index: Int(scrollView.contentOffset.x / screenW) - 1)
     }
 }
+
+protocol BannerDelegate {
+    func selectedItem(model: storyModel)
+    func scrollTo(index: Int)
+}
+
+
