@@ -24,7 +24,9 @@ class HomeViewController: UIViewController {
     var newsDate = ""
     var barImg = UIView()
     let titleNum = Variable(0)
-    
+    var refreshView: RefreshView?
+    var menuView = MenuViewController.createMenuView()
+
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var bannerView: BannerView!
     @IBOutlet weak var menuBtn: UIBarButtonItem!
@@ -35,6 +37,7 @@ class HomeViewController: UIViewController {
 
         loadData()
         setBarUI()
+        addRefresh()
         
         dataSource.configureCell = { (dataSource, tv, indexPath, model) in
             let cell = tv.dequeueReusableCell(withIdentifier: "ListTableViewCell") as! ListTableViewCell
@@ -62,9 +65,7 @@ class HomeViewController: UIViewController {
         
         menuBtn.rx
             .tap
-            .subscribe(onNext: {
-                print("tapMenu")
-            })
+            .subscribe(onNext: { self.menuView.showMenu() })
             .addDisposableTo(dispose)
         
         titleNum
@@ -99,6 +100,7 @@ extension HomeViewController {
                 arr.append(arr[1])
                 self.bannerView.imgUrlArr.value = arr
                 self.pageControl.numberOfPages = model.top_stories!.count
+                self.refreshView?.endRefresh()
             })
             .addDisposableTo(dispose)
     }
@@ -123,6 +125,13 @@ extension HomeViewController {
         navigationController?.navigationBar.isTranslucent = false
         tableView.frame = CGRect.init(x: 0, y: -64, width: screenW, height: screenH)
         bannerView.bannerDelegate = self
+        UIApplication.shared.keyWindow?.addSubview(menuView.view)
+    }
+    
+    func addRefresh() {
+        refreshView = RefreshView.init(frame: CGRect.init(x: 118, y: -42, width: 40, height: 40))
+        refreshView?.backgroundColor = UIColor.clear
+        view.addSubview(refreshView!)
     }
     
 }
@@ -167,10 +176,25 @@ extension HomeViewController: UITableViewDelegate {
 }
 
 extension HomeViewController: UIScrollViewDelegate {
+    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         bannerView.offY.value = Double(scrollView.contentOffset.y)
-        barImg.alpha = (scrollView.contentOffset.y - 0) / 200
+        barImg.alpha = scrollView.contentOffset.y / 200
+        refreshView?.pullToRefresh(progress: -scrollView.contentOffset.y / 64)
     }
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if scrollView.contentOffset.y <= -64 {
+            refreshView?.beginRefresh {
+                self.loadData()
+            }
+        }
+    }
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        refreshView?.resetLayer()
+    }
+    
 }
 
 extension HomeViewController: BannerDelegate {

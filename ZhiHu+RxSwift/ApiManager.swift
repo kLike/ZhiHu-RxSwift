@@ -12,6 +12,7 @@ import Moya
 enum ApiManager {
     case getNewList
     case getMoreNew(String)
+    case getThemeList
 }
 
 extension ApiManager: TargetType {
@@ -27,6 +28,8 @@ extension ApiManager: TargetType {
             return "news/latest"
         case .getMoreNew(let date):
             return "news/before/" + date
+        case .getThemeList:
+            return "themes"
         }
     }
     
