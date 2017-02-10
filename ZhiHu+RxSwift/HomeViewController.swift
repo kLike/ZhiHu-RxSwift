@@ -25,7 +25,7 @@ class HomeViewController: UIViewController {
     var barImg = UIView()
     let titleNum = Variable(0)
     var refreshView: RefreshView?
-    var menuView = MenuViewController.createMenuView()
+    let menuView = MenuViewController.shareInstance
 
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var bannerView: BannerView!
@@ -126,6 +126,7 @@ extension HomeViewController {
         tableView.frame = CGRect.init(x: 0, y: -64, width: screenW, height: screenH)
         bannerView.bannerDelegate = self
         UIApplication.shared.keyWindow?.addSubview(menuView.view)
+        menuView.bindtoNav = navigationController?.tabBarController
     }
     
     func addRefresh() {

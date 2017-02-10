@@ -10,6 +10,10 @@
 		078310301E4C5156009444AD /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0783102F1E4C5156009444AD /* MenuViewController.swift */; };
 		078310321E4C5DB6009444AD /* ThemeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 078310311E4C5DB6009444AD /* ThemeModel.swift */; };
 		078310341E4C5FF5009444AD /* ThemeTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 078310331E4C5FF5009444AD /* ThemeTableViewCell.swift */; };
+		07BDC15D1E4D591400893659 /* ThemeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07BDC15C1E4D591400893659 /* ThemeViewController.swift */; };
+		07BDC15F1E4D5AD600893659 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07BDC15E1E4D5AD600893659 /* MainViewController.swift */; };
+		07BDC1611E4D709B00893659 /* ThemeNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07BDC1601E4D709B00893659 /* ThemeNavViewController.swift */; };
+		07BDC1631E4DA4A900893659 /* TableBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07BDC1621E4DA4A900893659 /* TableBarViewController.swift */; };
 		07C388571E4852F20031AC6A /* ToolExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C388561E4852F20031AC6A /* ToolExtension.swift */; };
 		07C388591E4950900031AC6A /* BannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C388581E4950900031AC6A /* BannerView.swift */; };
 		07C3885B1E49531A0031AC6A /* BannerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C3885A1E49531A0031AC6A /* BannerCell.swift */; };
@@ -49,6 +53,10 @@
 		0783102F1E4C5156009444AD /* MenuViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
 		078310311E4C5DB6009444AD /* ThemeModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThemeModel.swift; sourceTree = "<group>"; };
 		078310331E4C5FF5009444AD /* ThemeTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThemeTableViewCell.swift; sourceTree = "<group>"; };
+		07BDC15C1E4D591400893659 /* ThemeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThemeViewController.swift; sourceTree = "<group>"; };
+		07BDC15E1E4D5AD600893659 /* MainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		07BDC1601E4D709B00893659 /* ThemeNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThemeNavViewController.swift; sourceTree = "<group>"; };
+		07BDC1621E4DA4A900893659 /* TableBarViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableBarViewController.swift; sourceTree = "<group>"; };
 		07C388561E4852F20031AC6A /* ToolExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToolExtension.swift; sourceTree = "<group>"; };
 		07C388581E4950900031AC6A /* BannerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BannerView.swift; sourceTree = "<group>"; };
 		07C3885A1E49531A0031AC6A /* BannerCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BannerCell.swift; sourceTree = "<group>"; };
@@ -127,8 +135,12 @@
 			isa = PBXGroup;
 			children = (
 				20111F731E3B7A860095EA90 /* AppDelegate.swift */,
+				07BDC1621E4DA4A900893659 /* TableBarViewController.swift */,
+				07BDC15E1E4D5AD600893659 /* MainViewController.swift */,
+				07BDC1601E4D709B00893659 /* ThemeNavViewController.swift */,
 				20F7E9551E3C436C001FFC3B /* HomeViewController.swift */,
 				0783102F1E4C5156009444AD /* MenuViewController.swift */,
+				07BDC15C1E4D591400893659 /* ThemeViewController.swift */,
 				20F7E95D1E3C574E001FFC3B /* ListTableViewCell.swift */,
 				078310331E4C5FF5009444AD /* ThemeTableViewCell.swift */,
 				20F7E9571E3C45E7001FFC3B /* ApiManager.swift */,
@@ -369,16 +381,20 @@
 			files = (
 				20111F741E3B7A860095EA90 /* AppDelegate.swift in Sources */,
 				20F7E95A1E3C4C87001FFC3B /* StoryModel.swift in Sources */,
+				07BDC15D1E4D591400893659 /* ThemeViewController.swift in Sources */,
 				20F7E9581E3C45E7001FFC3B /* ApiManager.swift in Sources */,
+				07BDC1631E4DA4A900893659 /* TableBarViewController.swift in Sources */,
 				078310321E4C5DB6009444AD /* ThemeModel.swift in Sources */,
 				20F7E95C1E3C4E71001FFC3B /* ToModelExtension.swift in Sources */,
 				078310301E4C5156009444AD /* MenuViewController.swift in Sources */,
 				07C388591E4950900031AC6A /* BannerView.swift in Sources */,
 				07C388571E4852F20031AC6A /* ToolExtension.swift in Sources */,
+				07BDC15F1E4D5AD600893659 /* MainViewController.swift in Sources */,
 				07C3885D1E4BF5E10031AC6A /* RefreshView.swift in Sources */,
 				078310341E4C5FF5009444AD /* ThemeTableViewCell.swift in Sources */,
 				20F7E9561E3C436C001FFC3B /* HomeViewController.swift in Sources */,
 				20F7E95E1E3C574E001FFC3B /* ListTableViewCell.swift in Sources */,
+				07BDC1611E4D709B00893659 /* ThemeNavViewController.swift in Sources */,
 				07C3885B1E49531A0031AC6A /* BannerCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

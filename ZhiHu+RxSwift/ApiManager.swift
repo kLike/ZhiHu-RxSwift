@@ -13,6 +13,7 @@ enum ApiManager {
     case getNewList
     case getMoreNew(String)
     case getThemeList
+    case getThemeDesc(Int)
 }
 
 extension ApiManager: TargetType {
@@ -30,6 +31,8 @@ extension ApiManager: TargetType {
             return "news/before/" + date
         case .getThemeList:
             return "themes"
+        case .getThemeDesc(let id):
+            return "theme/\(id)"
         }
     }
     

@@ -20,6 +20,7 @@ class MenuViewController: UIViewController {
     let dispose = DisposeBag()
     let themeArr = Variable([ThemeModel]())
     var showView = false
+    var bindtoNav: UITabBarController?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,14 +48,10 @@ class MenuViewController: UIViewController {
             .addDisposableTo(dispose)
         
         tableView.rx
-            .setDelegate(self)
-            .addDisposableTo(dispose)
-        
-        tableView.rx
             .modelSelected(ThemeModel.self)
             .subscribe(onNext: { (model) in
-                print(model)
                 self.showMenu()
+                self.showThemeVC(model)
             })
             .addDisposableTo(dispose)
     }
@@ -63,7 +60,9 @@ class MenuViewController: UIViewController {
 
 extension MenuViewController {
     
-    static func createMenuView() -> MenuViewController {
+    static let shareInstance = createMenuView()
+    
+    private static func createMenuView() -> MenuViewController {
         let storyboard = UIStoryboard.init(name: "Main", bundle: Bundle.main)
         let menuView = storyboard.instantiateViewController(withIdentifier: "MenuViewController") as? MenuViewController
         menuView?.view.frame = CGRect.init(x: -225, y: 0, width: 225, height: screenH)
@@ -74,16 +73,22 @@ extension MenuViewController {
         showView = !showView
         let view = UIApplication.shared.keyWindow?.subviews.first
         let menuView = UIApplication.shared.keyWindow?.subviews.last
+        UIApplication.shared.keyWindow?.bringSubview(toFront: (UIApplication.shared.keyWindow?.subviews[1])!)
         UIView.animate(withDuration: 0.5, animations: {
             view?.transform = self.showView ? CGAffineTransform.init(translationX: 225, y: 0) : CGAffineTransform.init(translationX: 0, y: 0)
             menuView?.transform = (view?.transform)!
         })
     }
     
-}
-
-extension MenuViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 0.01
+    func showThemeVC(_ model: ThemeModel) {
+        if model.id == nil {
+            bindtoNav?.selectedIndex = 0
+        } else {
+            bindtoNav?.selectedIndex = 1
+            NotificationCenter.default.post(name: Notification.Name.init(rawValue: "setTheme"), object: nil, userInfo: ["model": model])
+            UserDefaults.standard.set(model.name, forKey: "themeName")
+            UserDefaults.standard.set(model.thumbnail, forKey: "themeImgUrl")
+            UserDefaults.standard.set(model.id!, forKey: "themeNameId")
+        }
     }
 }
