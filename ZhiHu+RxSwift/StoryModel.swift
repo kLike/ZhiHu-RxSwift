@@ -17,7 +17,7 @@ struct listModel: HandyJSON {
 
 struct storyModel: HandyJSON {
     var ga_prefix: String?
-    var id: String?
+    var id: Int?
     var images: [String]? //list_stories
     var title: String?
     var type: Int?

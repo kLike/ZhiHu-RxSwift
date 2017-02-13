@@ -48,21 +48,42 @@ class ThemeViewController: UIViewController {
             })
             .addDisposableTo(dispose)
         
+        //设置代理要放在绑定数据之前，否者无效！！！
+        tableView.rx
+            .setDelegate(self)
+            .addDisposableTo(dispose)
+        
         listModelArr
             .asObservable()
             .bindTo(tableView.rx.items(cellIdentifier: "ListTableViewCell", cellType: ListTableViewCell.self)) {
                 row, model, cell in
                 cell.title.text = model.title
-//                cell.img.kf.setImage(with: URL.init(string: (model.images?.first)!))
+                if model.images != nil {
+                    cell.img.isHidden = false
+                    cell.titleRight.constant = 105
+                    cell.img.kf.setImage(with: URL.init(string: (model.images?.first)!))
+                } else {
+                    cell.img.isHidden = true
+                    cell.titleRight.constant = 15
+                }
             }
             .addDisposableTo(dispose)
         
+        tableView.rx
+            .modelSelected(storyModel.self)
+            .subscribe(onNext: { (model) in
+                self.tableView.deselectRow(at: self.tableView.indexPathForSelectedRow!, animated: true)
+                let detailVc = self.storyboard?.instantiateViewController(withIdentifier: "DetailViewController") as! DetailViewController
+                detailVc.id = model.id!
+                self.navigationController?.pushViewController(detailVc, animated: true)
+            })
+            .addDisposableTo(dispose)
     }
 
 }
 
 extension ThemeViewController {
-    
+
     func setUI() {
         title = UserDefaults.standard.object(forKey: "themeName") as! String?
         id = UserDefaults.standard.object(forKey: "themeNameId") as! Int
@@ -85,8 +106,18 @@ extension ThemeViewController {
             .mapModel(listModel.self)
             .subscribe(onNext: { (model) in
                 self.listModelArr.value = model.stories!
+                self.tableView.scrollToRow(at: IndexPath.init(row: 0, section: 0), at: .top, animated: false)
             })
             .addDisposableTo(dispose)
     }
     
+}
+
+extension ThemeViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 0.01
+    }
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 0.01
+    }
 }

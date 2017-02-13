@@ -12,6 +12,7 @@ class ListTableViewCell: UITableViewCell {
 
     @IBOutlet weak var title: UILabel!
     @IBOutlet weak var img: UIImageView!
+    @IBOutlet weak var titleRight: NSLayoutConstraint!
     
     override func awakeFromNib() {
         super.awakeFromNib()

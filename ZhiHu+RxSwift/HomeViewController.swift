@@ -54,8 +54,10 @@ class HomeViewController: UIViewController {
         tableView.rx
             .modelSelected(storyModel.self)
             .subscribe(onNext: { (model) in
-                print(model)
                 self.tableView.deselectRow(at: self.tableView.indexPathForSelectedRow!, animated: true)
+                let detailVc = self.storyboard?.instantiateViewController(withIdentifier: "DetailViewController") as! DetailViewController
+                detailVc.id = model.id!
+                self.navigationController?.pushViewController(detailVc, animated: true)
             })
             .addDisposableTo(dispose)
         
@@ -90,7 +92,7 @@ extension HomeViewController {
     
     func loadData() {
         provider
-            .request(.getNewList)
+            .request(.getNewsList)
             .mapModel(listModel.self)
             .subscribe(onNext: { (model) in
                 self.dataArr.value = [SectionModel(model: model.date!, items: model.stories!)]
@@ -107,7 +109,7 @@ extension HomeViewController {
     
     func loadMoreData() {
         provider
-            .request(.getMoreNew(newsDate))
+            .request(.getMoreNews(newsDate))
             .mapModel(listModel.self)
             .subscribe(onNext: { (model) in
                 self.dataArr.value.append(SectionModel(model: model.date!, items: model.stories!))
@@ -200,7 +202,9 @@ extension HomeViewController: UIScrollViewDelegate {
 
 extension HomeViewController: BannerDelegate {
     func selectedItem(model: storyModel) {
-        print(model)
+        let detailVc = self.storyboard?.instantiateViewController(withIdentifier: "DetailViewController") as! DetailViewController
+        detailVc.id = model.id!
+        self.navigationController?.pushViewController(detailVc, animated: true)
     }
     
     func scrollTo(index: Int) {

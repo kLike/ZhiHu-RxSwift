@@ -10,10 +10,11 @@ import Foundation
 import Moya
 
 enum ApiManager {
-    case getNewList
-    case getMoreNew(String)
+    case getNewsList
+    case getMoreNews(String)
     case getThemeList
     case getThemeDesc(Int)
+    case getNewsDesc(Int)
 }
 
 extension ApiManager: TargetType {
@@ -25,14 +26,16 @@ extension ApiManager: TargetType {
     /// The path to be appended to `baseURL` to form the full `URL`.
     var path: String {
         switch self {
-        case .getNewList:
+        case .getNewsList:
             return "news/latest"
-        case .getMoreNew(let date):
+        case .getMoreNews(let date):
             return "news/before/" + date
         case .getThemeList:
             return "themes"
         case .getThemeDesc(let id):
             return "theme/\(id)"
+        case .getNewsDesc(let id):
+            return "news/\(id)"
         }
     }
     
