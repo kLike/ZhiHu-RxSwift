@@ -88,6 +88,10 @@
                                                                 <rect key="frame" x="0.0" y="0.0" width="375" height="200"/>
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             </imageView>
+                                                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Home_Image_Mask" translatesAutoresizingMaskIntoConstraints="NO" id="m15-fX-Z4A">
+                                                                <rect key="frame" x="0.0" y="100" width="375" height="100"/>
+                                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                            </imageView>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="如果觉得我的文章对您有用，请随意打赏。您的支持将鼓励我继续创作！" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hZ3-sX-4BK">
                                                                 <rect key="frame" x="15" y="149.5" width="345" height="25.5"/>
                                                                 <fontDescription key="fontDescription" type="system" pointSize="21"/>
@@ -174,7 +178,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="190" y="139"/>
+            <point key="canvasLocation" x="189.59999999999999" y="138.98050974512745"/>
         </scene>
         <!--Detail View Controller-->
         <scene sceneID="TmB-tZ-rA5">
@@ -480,6 +484,7 @@
     </scenes>
     <resources>
         <image name="Dark_Menu_Icon_Home" width="20" height="20"/>
+        <image name="Home_Image_Mask" width="320" height="150"/>
         <image name="Menu_Avatar" width="35" height="35"/>
         <image name="Menu_Dark" width="22" height="22"/>
         <image name="Menu_Download" width="22" height="22"/>
