@@ -73,7 +73,10 @@ class ThemeViewController: UIViewController {
             .modelSelected(storyModel.self)
             .subscribe(onNext: { (model) in
                 self.tableView.deselectRow(at: self.tableView.indexPathForSelectedRow!, animated: true)
-                let detailVc = self.storyboard?.instantiateViewController(withIdentifier: "DetailViewController") as! DetailViewController
+                let detailVc = DetailViewController()
+                self.listModelArr.value.forEach({ (model) in
+                    detailVc.idArr.append(model.id!)
+                })
                 detailVc.id = model.id!
                 self.navigationController?.pushViewController(detailVc, animated: true)
             })

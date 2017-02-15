@@ -55,7 +55,12 @@ class HomeViewController: UIViewController {
             .modelSelected(storyModel.self)
             .subscribe(onNext: { (model) in
                 self.tableView.deselectRow(at: self.tableView.indexPathForSelectedRow!, animated: true)
-                let detailVc = self.storyboard?.instantiateViewController(withIdentifier: "DetailViewController") as! DetailViewController
+                let detailVc = DetailViewController()
+                self.dataArr.value.forEach { (sectionModel) in
+                    sectionModel.items.forEach({ (storyModel) in
+                        detailVc.idArr.append(storyModel.id!)
+                    })
+                }
                 detailVc.id = model.id!
                 self.navigationController?.pushViewController(detailVc, animated: true)
             })
@@ -202,7 +207,7 @@ extension HomeViewController: UIScrollViewDelegate {
 
 extension HomeViewController: BannerDelegate {
     func selectedItem(model: storyModel) {
-        let detailVc = self.storyboard?.instantiateViewController(withIdentifier: "DetailViewController") as! DetailViewController
+        let detailVc = DetailViewController()
         detailVc.id = model.id!
         self.navigationController?.pushViewController(detailVc, animated: true)
     }

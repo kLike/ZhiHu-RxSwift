@@ -180,39 +180,6 @@
             </objects>
             <point key="canvasLocation" x="189.59999999999999" y="138.98050974512745"/>
         </scene>
-        <!--Detail View Controller-->
-        <scene sceneID="TmB-tZ-rA5">
-            <objects>
-                <viewController storyboardIdentifier="DetailViewController" automaticallyAdjustsScrollViewInsets="NO" id="5Jf-nm-3tn" customClass="DetailViewController" customModule="ZhiHu_RxSwift" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="BYX-Ja-grX"/>
-                        <viewControllerLayoutGuide type="bottom" id="KVD-sB-GOQ"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="Myo-1Z-ylh">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <webView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FxM-cu-whT">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                                <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                            </webView>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <constraints>
-                            <constraint firstItem="KVD-sB-GOQ" firstAttribute="top" secondItem="FxM-cu-whT" secondAttribute="bottom" id="BWU-6s-a3R"/>
-                            <constraint firstItem="FxM-cu-whT" firstAttribute="top" secondItem="Myo-1Z-ylh" secondAttribute="top" id="IOr-e1-koD"/>
-                            <constraint firstItem="FxM-cu-whT" firstAttribute="leading" secondItem="Myo-1Z-ylh" secondAttribute="leading" id="MKJ-fg-fr7"/>
-                            <constraint firstAttribute="trailing" secondItem="FxM-cu-whT" secondAttribute="trailing" id="kQX-dP-VRr"/>
-                        </constraints>
-                    </view>
-                    <connections>
-                        <outlet property="webview" destination="FxM-cu-whT" id="Iff-qI-sIY"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="d9v-35-NVY" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1125.5999999999999" y="138.98050974512745"/>
-        </scene>
         <!--Menu View Controller-->
         <scene sceneID="wNB-aP-6aD">
             <objects>
