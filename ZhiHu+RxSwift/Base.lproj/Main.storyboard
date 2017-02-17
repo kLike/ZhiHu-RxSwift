@@ -10,10 +10,10 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Tab Bar Controller-->
+        <!--Main View Controller-->
         <scene sceneID="R0S-DT-azK">
             <objects>
-                <tabBarController storyboardIdentifier="TableBarViewController" id="0ix-l0-XXd" sceneMemberID="viewController">
+                <tabBarController storyboardIdentifier="MainViewController" id="0ix-l0-XXd" customClass="MainViewController" customModule="ZhiHu_RxSwift" customModuleProvider="target" sceneMemberID="viewController">
                     <tabBar key="tabBar" hidden="YES" contentMode="scaleToFill" id="o64-H8-0Vh">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -137,17 +137,26 @@
                                                     <color key="textColor" red="0.031364817172288895" green="0.031376998871564865" blue="0.03136405348777771" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="fMI-lW-cA9">
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="fMI-lW-cA9">
                                                     <rect key="frame" x="285" y="14" width="75" height="60"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="60" id="OcG-8j-UnK"/>
                                                         <constraint firstAttribute="width" constant="75" id="gKk-NW-oIs"/>
                                                     </constraints>
                                                 </imageView>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Home_Morepic" translatesAutoresizingMaskIntoConstraints="NO" id="8fb-wD-lHY">
+                                                    <rect key="frame" x="328" y="60" width="32" height="14"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="32" id="6TG-gs-Hih"/>
+                                                        <constraint firstAttribute="height" constant="14" id="kzZ-xG-ymC"/>
+                                                    </constraints>
+                                                </imageView>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstAttribute="trailing" secondItem="fMI-lW-cA9" secondAttribute="trailing" constant="15" id="7gi-uL-v0G"/>
+                                                <constraint firstAttribute="trailing" secondItem="8fb-wD-lHY" secondAttribute="trailing" constant="15" id="8LD-Ms-Fsb"/>
                                                 <constraint firstItem="bfS-lH-Ndg" firstAttribute="top" secondItem="fMI-lW-cA9" secondAttribute="top" id="8l3-sh-ncz"/>
+                                                <constraint firstAttribute="bottom" secondItem="8fb-wD-lHY" secondAttribute="bottom" constant="15" id="DoB-W4-AVT"/>
                                                 <constraint firstItem="bfS-lH-Ndg" firstAttribute="leading" secondItem="jC8-jl-m7c" secondAttribute="leading" constant="15" id="FR2-OP-cYG"/>
                                                 <constraint firstItem="fMI-lW-cA9" firstAttribute="centerY" secondItem="jC8-jl-m7c" secondAttribute="centerY" id="NCx-MA-dHh"/>
                                                 <constraint firstAttribute="trailing" secondItem="bfS-lH-Ndg" secondAttribute="trailing" constant="105" id="p14-fG-X3G"/>
@@ -155,6 +164,7 @@
                                         </tableViewCellContentView>
                                         <connections>
                                             <outlet property="img" destination="fMI-lW-cA9" id="dRd-qN-crB"/>
+                                            <outlet property="morepicImg" destination="8fb-wD-lHY" id="nEN-fb-uhu"/>
                                             <outlet property="title" destination="bfS-lH-Ndg" id="mbd-V3-Cwu"/>
                                         </connections>
                                     </tableViewCell>
@@ -216,7 +226,7 @@
                                                         <constraint firstAttribute="height" constant="18" id="rPM-uL-plZ"/>
                                                     </constraints>
                                                 </imageView>
-                                                <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Dark_Menu_Icon_Home" translatesAutoresizingMaskIntoConstraints="NO" id="IZX-gj-ors">
+                                                <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Menu_Icon_Home" translatesAutoresizingMaskIntoConstraints="NO" id="IZX-gj-ors">
                                                     <rect key="frame" x="15" y="15" width="20" height="20"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="20" id="2jF-T4-eYv"/>
@@ -405,11 +415,18 @@
                                                     <color key="textColor" red="0.031364817170000003" green="0.031376998869999999" blue="0.031364053490000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="hPE-3F-KDG">
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="hPE-3F-KDG">
                                                     <rect key="frame" x="285" y="14" width="75" height="60"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="75" id="8M0-0O-6ce"/>
                                                         <constraint firstAttribute="height" constant="60" id="yVa-mn-6TT"/>
+                                                    </constraints>
+                                                </imageView>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Home_Morepic" translatesAutoresizingMaskIntoConstraints="NO" id="Fcq-6S-EzD">
+                                                    <rect key="frame" x="328" y="60.5" width="32" height="14"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="14" id="alk-il-jMk"/>
+                                                        <constraint firstAttribute="width" constant="32" id="sJc-cS-70D"/>
                                                     </constraints>
                                                 </imageView>
                                             </subviews>
@@ -417,12 +434,15 @@
                                                 <constraint firstAttribute="trailing" secondItem="hPE-3F-KDG" secondAttribute="trailing" constant="15" id="12G-zI-Aym"/>
                                                 <constraint firstItem="oDg-Ed-pxC" firstAttribute="top" secondItem="hPE-3F-KDG" secondAttribute="top" id="6Jj-I4-J3t"/>
                                                 <constraint firstAttribute="trailing" secondItem="oDg-Ed-pxC" secondAttribute="trailing" constant="105" id="71z-h9-aXJ"/>
+                                                <constraint firstAttribute="bottom" secondItem="Fcq-6S-EzD" secondAttribute="bottom" constant="15" id="MVr-8t-hxl"/>
                                                 <constraint firstItem="oDg-Ed-pxC" firstAttribute="leading" secondItem="Vlg-Vw-Ctd" secondAttribute="leading" constant="15" id="qbY-f8-jIG"/>
+                                                <constraint firstAttribute="trailing" secondItem="Fcq-6S-EzD" secondAttribute="trailing" constant="15" id="rxg-3Y-O9Z"/>
                                                 <constraint firstItem="hPE-3F-KDG" firstAttribute="centerY" secondItem="Vlg-Vw-Ctd" secondAttribute="centerY" id="vkq-tb-mL0"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
                                             <outlet property="img" destination="hPE-3F-KDG" id="Wlv-Ha-xYp"/>
+                                            <outlet property="morepicImg" destination="Fcq-6S-EzD" id="BjV-wY-cVz"/>
                                             <outlet property="title" destination="oDg-Ed-pxC" id="R0n-uK-5Pk"/>
                                             <outlet property="titleRight" destination="71z-h9-aXJ" id="rFF-xD-d1Y"/>
                                         </connections>
@@ -450,12 +470,13 @@
         </scene>
     </scenes>
     <resources>
-        <image name="Dark_Menu_Icon_Home" width="20" height="20"/>
         <image name="Home_Image_Mask" width="320" height="150"/>
+        <image name="Home_Morepic" width="32" height="14"/>
         <image name="Menu_Avatar" width="35" height="35"/>
         <image name="Menu_Dark" width="22" height="22"/>
         <image name="Menu_Download" width="22" height="22"/>
         <image name="Menu_Icon_Collect" width="20" height="20"/>
+        <image name="Menu_Icon_Home" width="20" height="20"/>
         <image name="Menu_Icon_Message" width="20" height="20"/>
         <image name="Menu_Icon_Setting" width="20" height="20"/>
         <image name="Menu_Mask" width="320" height="148"/>

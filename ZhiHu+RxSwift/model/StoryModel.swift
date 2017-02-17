@@ -22,4 +22,5 @@ struct storyModel: HandyJSON {
     var title: String?
     var type: Int?
     var image: String? //top_stories
+    var multipic = false
 }

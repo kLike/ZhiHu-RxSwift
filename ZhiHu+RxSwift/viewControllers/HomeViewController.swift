@@ -43,6 +43,7 @@ class HomeViewController: UIViewController {
             let cell = tv.dequeueReusableCell(withIdentifier: "ListTableViewCell") as! ListTableViewCell
             cell.title.text = model.title
             cell.img.kf.setImage(with: URL.init(string: (model.images?.first)!))
+            cell.morepicImg.isHidden = !model.multipic
             return cell
         }
         
@@ -72,7 +73,7 @@ class HomeViewController: UIViewController {
         
         menuBtn.rx
             .tap
-            .subscribe(onNext: { self.menuView.showMenu() })
+            .subscribe(onNext: { self.menuView.showView = !self.menuView.showView })
             .addDisposableTo(dispose)
         
         titleNum
@@ -134,6 +135,12 @@ extension HomeViewController {
         bannerView.bannerDelegate = self
         UIApplication.shared.keyWindow?.addSubview(menuView.view)
         menuView.bindtoNav = navigationController?.tabBarController
+        view.addGestureRecognizer(UIPanGestureRecognizer(target:self, action:#selector(panGesture(pan:))))
+        menuView.view.addGestureRecognizer(UIPanGestureRecognizer(target:self, action:#selector(panGesture(pan:))))
+    }
+    
+    func panGesture(pan: UIPanGestureRecognizer) {
+        menuView.panGesture(pan: pan)
     }
     
     func addRefresh() {
@@ -208,6 +215,11 @@ extension HomeViewController: UIScrollViewDelegate {
 extension HomeViewController: BannerDelegate {
     func selectedItem(model: storyModel) {
         let detailVc = DetailViewController()
+        self.dataArr.value.forEach { (sectionModel) in
+            sectionModel.items.forEach({ (storyModel) in
+                detailVc.idArr.append(storyModel.id!)
+            })
+        }
         detailVc.id = model.id!
         self.navigationController?.pushViewController(detailVc, animated: true)
     }

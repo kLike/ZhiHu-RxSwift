@@ -33,7 +33,7 @@ class ThemeViewController: UIViewController {
         
         menuBtn.rx.tap
             .subscribe(onNext: {
-                self.menuView.showMenu()
+                self.menuView.showView = !self.menuView.showView
             })
             .addDisposableTo(dispose)
         
@@ -58,6 +58,7 @@ class ThemeViewController: UIViewController {
             .bindTo(tableView.rx.items(cellIdentifier: "ListTableViewCell", cellType: ListTableViewCell.self)) {
                 row, model, cell in
                 cell.title.text = model.title
+                cell.morepicImg.isHidden = !model.multipic
                 if model.images != nil {
                     cell.img.isHidden = false
                     cell.titleRight.constant = 105
@@ -101,6 +102,11 @@ extension ThemeViewController {
         navigationController?.navigationBar.isTranslucent = false
         headImg.frame = CGRect.init(x: 0, y: -64, width: screenW, height: 64)
         tableView.frame = CGRect.init(x: 0, y: 0, width: screenW, height: screenH - 64)
+        view.addGestureRecognizer(UIPanGestureRecognizer(target:self, action:#selector(panGesture(pan:))))
+    }
+    
+    func panGesture(pan: UIPanGestureRecognizer) {
+        menuView.panGesture(pan: pan)
     }
     
     func loadData() {

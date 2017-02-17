@@ -23,6 +23,9 @@
 		07BDB95A1E52B5A600D618DF /* ToModelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07BDB9571E52B5A600D618DF /* ToModelExtension.swift */; };
 		07BDB95B1E52B5A600D618DF /* ToolExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07BDB9581E52B5A600D618DF /* ToolExtension.swift */; };
 		07BDB95D1E5401E300D618DF /* DetailWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07BDB95C1E5401E300D618DF /* DetailWebView.swift */; };
+		07F4127A1E569CDA00C5DE06 /* LaunchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07F412791E569CDA00C5DE06 /* LaunchViewController.swift */; };
+		07F412801E56A5D200C5DE06 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07F4127F1E56A5D200C5DE06 /* MainViewController.swift */; };
+		07F412821E56AC7700C5DE06 /* LaunchModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07F412811E56AC7700C5DE06 /* LaunchModel.swift */; };
 		20111F741E3B7A860095EA90 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20111F731E3B7A860095EA90 /* AppDelegate.swift */; };
 		20111F791E3B7A860095EA90 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 20111F771E3B7A860095EA90 /* Main.storyboard */; };
 		20111F7B1E3B7A860095EA90 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 20111F7A1E3B7A860095EA90 /* Assets.xcassets */; };
@@ -66,6 +69,9 @@
 		07BDB9571E52B5A600D618DF /* ToModelExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToModelExtension.swift; sourceTree = "<group>"; };
 		07BDB9581E52B5A600D618DF /* ToolExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToolExtension.swift; sourceTree = "<group>"; };
 		07BDB95C1E5401E300D618DF /* DetailWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailWebView.swift; sourceTree = "<group>"; };
+		07F412791E569CDA00C5DE06 /* LaunchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LaunchViewController.swift; sourceTree = "<group>"; };
+		07F4127F1E56A5D200C5DE06 /* MainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		07F412811E56AC7700C5DE06 /* LaunchModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LaunchModel.swift; sourceTree = "<group>"; };
 		20111F701E3B7A860095EA90 /* ZhiHu+RxSwift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ZhiHu+RxSwift.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		20111F731E3B7A860095EA90 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		20111F781E3B7A860095EA90 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -116,6 +122,7 @@
 				07BDB93F1E52B57400D618DF /* HomeViewController.swift */,
 				07BDB9401E52B57400D618DF /* MenuViewController.swift */,
 				07BDB9411E52B57400D618DF /* ThemeViewController.swift */,
+				07F4127F1E56A5D200C5DE06 /* MainViewController.swift */,
 			);
 			path = viewControllers;
 			sourceTree = "<group>";
@@ -139,6 +146,7 @@
 				07BDB9501E52B59800D618DF /* NewsDetailModel.swift */,
 				07BDB9511E52B59800D618DF /* StoryModel.swift */,
 				07BDB9521E52B59800D618DF /* ThemeModel.swift */,
+				07F412811E56AC7700C5DE06 /* LaunchModel.swift */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -183,6 +191,7 @@
 				07BDB93C1E52AF8600D618DF /* model */,
 				07BDB93D1E52AFA300D618DF /* tool */,
 				20111F731E3B7A860095EA90 /* AppDelegate.swift */,
+				07F412791E569CDA00C5DE06 /* LaunchViewController.swift */,
 				20111F771E3B7A860095EA90 /* Main.storyboard */,
 				20111F7A1E3B7A860095EA90 /* Assets.xcassets */,
 				20111F7C1E3B7A860095EA90 /* LaunchScreen.storyboard */,
@@ -297,6 +306,7 @@
 				TargetAttributes = {
 					20111F6F1E3B7A860095EA90 = {
 						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = LQ4F4QPT53;
 						ProvisioningStyle = Automatic;
 					};
 					20111F831E3B7A870095EA90 = {
@@ -415,9 +425,12 @@
 				07BDB9421E52B57400D618DF /* DetailViewController.swift in Sources */,
 				07BDB9431E52B57400D618DF /* HomeViewController.swift in Sources */,
 				07BDB95A1E52B5A600D618DF /* ToModelExtension.swift in Sources */,
+				07F412821E56AC7700C5DE06 /* LaunchModel.swift in Sources */,
 				07BDB9531E52B59800D618DF /* NewsDetailModel.swift in Sources */,
+				07F412801E56A5D200C5DE06 /* MainViewController.swift in Sources */,
 				07BDB94E1E52B58B00D618DF /* RefreshView.swift in Sources */,
 				07BDB94B1E52B58B00D618DF /* BannerCell.swift in Sources */,
+				07F4127A1E569CDA00C5DE06 /* LaunchViewController.swift in Sources */,
 				07BDB95D1E5401E300D618DF /* DetailWebView.swift in Sources */,
 				07BDB94D1E52B58B00D618DF /* ListTableViewCell.swift in Sources */,
 				07BDB9541E52B59800D618DF /* StoryModel.swift in Sources */,
@@ -578,7 +591,9 @@
 			baseConfigurationReference = 4C9A9689D07E41B603B226C5 /* Pods-ZhiHu+RxSwift.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = LQ4F4QPT53;
 				INFOPLIST_FILE = "ZhiHu+RxSwift/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "like.com.ZhiHu-RxSwift";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -591,7 +606,9 @@
 			baseConfigurationReference = 57AE22ED374C263D087B4CA3 /* Pods-ZhiHu+RxSwift.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = LQ4F4QPT53;
 				INFOPLIST_FILE = "ZhiHu+RxSwift/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "like.com.ZhiHu-RxSwift";
 				PRODUCT_NAME = "$(TARGET_NAME)";
