@@ -161,7 +161,7 @@ struct storyModel: HandyJSON {
 
 
 
-![menuShow.gif](http://upload-images.jianshu.io/upload_images/2148183-0278b744223b1b62.gif?imageMogr2/auto-orient/strip)
+![menuShow.gif](https://github.com/kLike/ZhiHu-RxSwift/blob/master/ZhiHu%2BRxSwift/menuShow.gif)
 
 由于导航栏一开始用的原生的（其实应该自定义，因为后面涉及到很多导航栏问题），所以左右平移的时候要把导航栏一起移动，所以遇到了一点问题，后来查找相关资料后解决了此问题：
 
@@ -253,7 +253,7 @@ extension HomeViewController: UIGestureRecognizerDelegate {
 
 ####2. 文章的快速切换
 
-![newsChange.gif](http://upload-images.jianshu.io/upload_images/2148183-b19e90ebf3f01967.gif?imageMogr2/auto-orient/strip)
+![newsChange.gif](https://github.com/kLike/ZhiHu-RxSwift/blob/master/ZhiHu%2BRxSwift/newsChange.gif)
 
 文章详情是用UIWebView加载html数据来展现的，这里我自定义class DetailWebView: UIWebView，以便于两个文章详情的切换，用于显示文章详情的DetailViewController包含两个DetailWebView，一个webview用于展示当前页面，另一个previousWeb放在屏幕外准备随时切换文章，当发生切换文章时，动画呈现previousWeb，并在后续移除在屏幕外webview，把previousWeb作为新的webview，同时生成新的previousWeb
 ```
