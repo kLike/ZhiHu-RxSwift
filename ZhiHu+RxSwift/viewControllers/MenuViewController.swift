@@ -25,7 +25,7 @@ class MenuViewController: UIViewController {
     var endDate: Date?
     var showView = false {
         didSet {
-            showView ? showMenu() : dissmissMenu()
+            showView ? showMenu() : dismissMenu()
         }
     }
 
@@ -158,7 +158,7 @@ extension MenuViewController {
         })
     }
     
-    func dissmissMenu() {
+    func dismissMenu() {
         let view = UIApplication.shared.keyWindow?.subviews.first
         let menuView = UIApplication.shared.keyWindow?.subviews.last
         UIApplication.shared.keyWindow?.bringSubview(toFront: (UIApplication.shared.keyWindow?.subviews[1])!)

@@ -35,7 +35,7 @@ class MainViewController: UITabBarController {
             .subscribe(onNext: { (model) in
                 if let imgModel = model.creatives?.first {
                     self.launchView.kf.setImage(with: URL.init(string: imgModel.url!), placeholder: nil, options: nil, progressBlock: nil, completionHandler: { (_, _, _, _) in
-                        UIView.animate(withDuration: 2, animations: {
+                        UIView.animate(withDuration: 1.5, animations: {
                             self.launchView.alpha = 1
                         }) { (_) in
                             UIView.animate(withDuration: 0.3, animations: {

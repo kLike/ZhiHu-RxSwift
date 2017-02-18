@@ -54,13 +54,14 @@ class RefreshView: UIView {
 }
 
 extension RefreshView {
-    
+    //向下拖拽视图准备刷新的过程会响应
     func pullToRefresh(progress: CGFloat) {
         circleLayer.strokeEnd = progress
     }
-    
+    //开始刷新
     func beginRefresh(begin: @escaping () -> Void) {
         if refreshing {
+            //防止刷新未结束又开始请求刷新
             return
         }
         refreshing = true
@@ -69,13 +70,13 @@ extension RefreshView {
         indicatorView.startAnimating()
         begin()
     }
-    
+    //结束刷新
     func endRefresh() {
         refreshing = false
         indicatorView.stopAnimating()
         indicatorView.removeFromSuperview()
     }
-    
+    //重制刷新控件
     func resetLayer() {
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5) {
             self.creatCircleLayer()
