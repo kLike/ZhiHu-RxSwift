@@ -134,10 +134,7 @@ extension ImplicitlyUnwrappedOptional: ImplicitlyUnwrappedTypeProtocol {
     }
 
     func getWrappedValue() -> Any? {
-        if case let .some(x) = self {
-            return x
-        }
-        return nil
+        return self == nil ? nil : self!
     }
 }
 

@@ -45,6 +45,8 @@ class MainViewController: UITabBarController {
                             })
                         }
                     })
+                } else {
+                    self.launchView.removeFromSuperview()
                 }
             })
             .addDisposableTo(dispose)

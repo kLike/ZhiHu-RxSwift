@@ -21,9 +21,9 @@ PODS:
   - Then (2.1.0)
 
 DEPENDENCIES:
-  - HandyJSON (~> 1.5.2)
+  - HandyJSON
   - Kingfisher
-  - Moya (~> 8.0.0-beta.5)
+  - Moya
   - Moya/RxSwift
   - RxCocoa (~> 3.0)
   - RxDataSources (~> 1.0)
@@ -43,6 +43,6 @@ SPEC CHECKSUMS:
   SwiftDate: a36d5ce7c86bed3ed92b583ccbf15045f374ac65
   Then: 8496793c8fcac95482b943909b440724c7d8d82c
 
-PODFILE CHECKSUM: 95a3f8b78273cf110be347ce36feb0493212aad9
+PODFILE CHECKSUM: a44abfa800723bcdc0e43f8df46c2c066505c24d
 
-COCOAPODS: 1.2.0.rc.1
+COCOAPODS: 1.1.1

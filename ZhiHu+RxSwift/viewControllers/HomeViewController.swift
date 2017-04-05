@@ -26,7 +26,9 @@ class HomeViewController: UIViewController {
     let titleNum = Variable(0)
     var refreshView: RefreshView?
     let menuView = MenuViewController.shareInstance
-
+//    let loadNewDataEvent = PublishSubject<Void>()
+//    let loadMoreDataEvent = PublishSubject<Void>()
+    
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var bannerView: BannerView!
     @IBOutlet weak var menuBtn: UIBarButtonItem!
@@ -97,6 +99,26 @@ class HomeViewController: UIViewController {
 extension HomeViewController {
     
     func loadData() {
+//        loadNewDataEvent
+//            .flatMap {
+//                self.provider
+//                    .request(.getNewsList)
+//                    .mapModel(listModel.self)
+//            }
+//            .subscribe(onNext: { (model) in
+//                self.dataArr.value = [SectionModel(model: model.date!, items: model.stories!)]
+//                self.newsDate = model.date!
+//                var arr = model.top_stories!
+//                arr.insert(arr.last!, at: 0)
+//                arr.append(arr[1])
+//                self.bannerView.imgUrlArr.value = arr
+//                self.pageControl.numberOfPages = model.top_stories!.count
+//                self.refreshView?.endRefresh()
+//            })
+//            .addDisposableTo(dispose)
+//        
+//        loadNewDataEvent.onNext()
+        
         provider
             .request(.getNewsList)
             .mapModel(listModel.self)
@@ -202,6 +224,7 @@ extension HomeViewController: UIScrollViewDelegate {
         if scrollView.contentOffset.y <= -64 {
             refreshView?.beginRefresh {
                 self.loadData()
+//                self.loadNewDataEvent.onNext()
             }
         }
     }
