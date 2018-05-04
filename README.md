@@ -29,8 +29,8 @@
 
 最终实现效果：
 ```
-let provider = RxMoyaProvider<ApiManager>()
-provider                                      //moya网络请求的manager
+let provider = MoyaProvider<ApiManager>()
+provider.rx                                   //moya网络请求的manager
     .request(.getNewsList)                    //各种请求以枚举的形式调用
     .mapModel(listModel.self)                 //JOSN->Model
     .subscribe(onNext: { (model) in
@@ -51,18 +51,21 @@ enum ApiManager {
 ```
 由于Moya没有支持HandyJSON扩展，这里我自己实现了此扩展：
 ```
-extension ObservableType where E == Response {
-    public func mapModel<T: HandyJSON>(_ type: T.Type) -> Observable<T> {
-        return flatMap { response -> Observable<T> in
-            return Observable.just(response.mapModel(T.self))
+extension Response {
+    func mapModel<T: HandyJSON>(_ type: T.Type) throws -> T {
+        let jsonString = String.init(data: data, encoding: .utf8)
+        guard let object = JSONDeserializer<T>.deserializeFrom(json: jsonString) else {
+            throw MoyaError.jsonMapping(self)
         }
+        return object
     }
 }
 
-extension Response {
-    func mapModel<T: HandyJSON>(_ type: T.Type) -> T {
-        let jsonString = String.init(data: data, encoding: .utf8)
-        return JSONDeserializer<T>.deserializeFrom(json: jsonString)!
+extension PrimitiveSequence where TraitType == SingleTrait, ElementType == Response {
+    func mapModel<T: HandyJSON>(_ type: T.Type) -> Single<T> {
+        return flatMap { response -> Single<T> in
+            return Single.just(try response.mapModel(T.self))
+        }
     }
 }
 ```
@@ -92,29 +95,30 @@ struct storyModel: HandyJSON {
 数据请求处理好了，就该绑定视图显示出来了，这里就是RxSwift的拿手好戏了。下面我们先看最简单的展现：
 
 ```
-    let provider = RxMoyaProvider<ApiManager>()
+    let provider = MoyaProvider<ApiManager>()
     let dispose = DisposeBag()
     let themeArr = Variable([ThemeModel]())
         
         //请求数据
-        provider
+        provider.rx
             .request(.getThemeList)
             .mapModel(ThemeResponseModel.self)
-            .subscribe(onNext: { (model) in
+            .subscribe(onSuccess: { (model) in
                 self.themeArr.value = model.others!
+                ...
             })
-            .addDisposableTo(dispose)
+            .disposed(by: dispose)
         
         //绑定视图
         themeArr
             .asObservable()
-            .bindTo(tableView.rx.items(cellIdentifier: "ThemeTableViewCell", cellType: ThemeTableViewCell.self)) {
+            .bind(to: tableView.rx.items(cellIdentifier: "ThemeTableViewCell", cellType: ThemeTableViewCell.self)) {
                 row, model, cell in
                 cell.name.text = model.name
                 cell.homeIcon.isHidden = row == 0 ? false : true
                 cell.nameLeft.constant = row == 0 ? 50 : 15
         }
-            .addDisposableTo(dispose)
+            .disposed(by: dispose)
       
        //响应视图   
         tableView.rx
@@ -123,35 +127,30 @@ struct storyModel: HandyJSON {
                 self.showView = false
                 self.showThemeVC(model)
             })
-            .addDisposableTo(dispose)
+            .disposed(by: dispose)
 ```
 这样简单的几行代码就完成网络请求数据展现以及用户响应一系列流程，什么代理，扩展都不用写了，减少了一半以上的代码，是不是看着就觉得爽炸了！我们再看看复杂一点的，分组tableview：
 ```
-        let dataSource = RxTableViewSectionedReloadDataSource<SectionModel<String, storyModel>>()
         let dispose = DisposeBag()
-
-        dataSource.configureCell = { (dataSource, tv, indexPath, model) in
+        let dataSource = RxTableViewSectionedReloadDataSource<SectionModel<String, storyModel>>(configureCell: { (dataSource,  tv, indexPath, model) in
             let cell = tv.dequeueReusableCell(withIdentifier: "ListTableViewCell") as! ListTableViewCell
             cell.title.text = model.title
             cell.img.kf.setImage(with: URL.init(string: (model.images?.first)!))
             cell.morepicImg.isHidden = !model.multipic
             return cell
-        }
+        })
         
         dataArr
             .asObservable()
-            .bindTo(tableView.rx.items(dataSource: dataSource))
-            .addDisposableTo(dispose)
+            .bind(to: tableView.rx.items(dataSource: dataSource))
+            .disposed(by: dispose)
         
         tableView.rx
             .modelSelected(storyModel.self)
             .subscribe(onNext: { (model) in
-                self.tableView.deselectRow(at: self.tableView.indexPathForSelectedRow!, animated: true)
-                let detailVc = DetailViewController()
-                detailVc.id = model.id!
-                self.navigationController?.pushViewController(detailVc, animated: true)
+                ...
             })
-            .addDisposableTo(dispose)
+            .disposed(by: dispose)
 ```
 其实也很简单，就是需要绑定SectionModel，当然你也可以自定义SectionModel来分组展示，上面的代码都在项目筛选出来的，具体实现可以看文末项目链接。
 
@@ -159,33 +158,8 @@ struct storyModel: HandyJSON {
 
 ####1. 菜单栏与主页面的切换
 
-
-
 ![menuShow.gif](https://github.com/kLike/ZhiHu-RxSwift/blob/master/ZhiHu%2BRxSwift/menuShow.gif)
 
-由于导航栏一开始用的原生的（其实应该自定义，因为后面涉及到很多导航栏问题），所以左右平移的时候要把导航栏一起移动，所以遇到了一点问题，后来查找相关资料后解决了此问题：
-
-```
-    func showMenu() {
-        let view = UIApplication.shared.keyWindow?.subviews.first
-        let menuView = UIApplication.shared.keyWindow?.subviews.last
-        UIApplication.shared.keyWindow?.bringSubview(toFront: (UIApplication.shared.keyWindow?.subviews[1])!)
-        UIView.animate(withDuration: 0.5, animations: { 
-            view?.transform = CGAffineTransform.init(translationX: 225, y: 0)
-            menuView?.transform = (view?.transform)!
-        })
-    }
-    
-    func dismissMenu() {
-        let view = UIApplication.shared.keyWindow?.subviews.first
-        let menuView = UIApplication.shared.keyWindow?.subviews.last
-        UIApplication.shared.keyWindow?.bringSubview(toFront: (UIApplication.shared.keyWindow?.subviews[1])!)
-        UIView.animate(withDuration: 0.5, animations: {
-            view?.transform = CGAffineTransform.init(translationX: 0, y: 0)
-            menuView?.transform = (view?.transform)!
-        })
-    }
-```
 菜单栏的显示和隐藏需要配合手势，研究官方知乎日报App后，发现存在轻扫和拖拽滑动两个手势，相对应UIPanGestureRecognizer和UISwipeGestureRecognizer，当把这两个视图分别加在视图上的时候，只会响应一个手势，后来设置UIGestureRecognizerDelegate后避免了这个问题：
 ```
 extension HomeViewController: UIGestureRecognizerDelegate {
@@ -299,7 +273,7 @@ extension HomeViewController: UIGestureRecognizerDelegate {
 
 ####3.首页刷新
 Swift版的刷新控件三方还没找比较好的，一度打算自己封装一个，但是一直拖着，😫以后应该会写。
-知乎日报的刷新控件与一般放在tableview上不同，它应该是放在导航栏上面，配合tableview来实现刷新，这也是前面为什么说导航栏要自定义的原因之一，因为已经用了原生的导航栏，只好巧妙（偷懒）加在了view上，其实这个刷新就是一个画圆圈的过程，下面看看自定义的RefreshView:
+知乎日报的刷新控件与一般放在tableview上不同，它应该是放在导航栏上面，配合tableview来实现刷新，其实这个刷新就是一个画圆圈的过程，下面看看自定义的RefreshView:
 ```
 class RefreshView: UIView {
 
@@ -383,4 +357,4 @@ extension RefreshView {
 - .then 语法用的是 [Then](https://github.com/devxoul/Then)，小而妙，很喜欢
 
 ###总结
-小生才疏学浅，未有编程天赋，难免有许多谬误纰漏之处，各位看官当看且看，若有任何问题都可以提出，愿接受各种批评建议。要是觉得这篇文章稍有用处，可以给个star，十分感激。
+才疏学浅，若有任何问题都可以提出，愿接受各种批评建议。要是觉得这篇文章稍有用处，可以给个star，十分感激。
