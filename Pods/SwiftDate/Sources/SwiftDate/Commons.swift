@@ -1,29 +1,88 @@
+// SwiftDate
+// Manage Date/Time & Timezone in Swift
 //
-//	SwiftDate, Full featured Swift date library for parsing, validating, manipulating, and formatting dates and timezones.
-//	Created by:				Daniele Margutti
-//	Main contributors:		Jeroen Houtzager
+// Created by: Daniele Margutti
+// Email: <hello@danielemargutti.com>
+// Web: <http://www.danielemargutti.com>
 //
-//
-//	Permission is hereby granted, free of charge, to any person obtaining a copy
-//	of this software and associated documentation files (the "Software"), to deal
-//	in the Software without restriction, including without limitation the rights
-//	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-//	copies of the Software, and to permit persons to whom the Software is
-//	furnished to do so, subject to the following conditions:
-//
-//	The above copyright notice and this permission notice shall be included in
-//	all copies or substantial portions of the Software.
-//
-//	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-//	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-//	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-//	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-//	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-//	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-//	THE SOFTWARE.
+// Licensed under MIT License.
 
 import Foundation
 
+internal extension Calendar.Component {
+	
+	/// Return the localized identifier of a calendar component
+	///
+	/// - parameter unit:  unit
+	/// - parameter value: value
+	///
+	/// - returns: return the plural or singular form of the time unit used to compose a valid identifier for search a localized
+	///   string in resource bundle
+	internal func localizedKey(forValue value: Int) -> String {
+		let locKey = self.localizedKey
+		let absValue = abs(value)
+		switch absValue {
+		case 0: // zero difference for this unit
+			return "0\(locKey)"
+		case 1: // one unit of difference
+			return locKey
+		default: // more than 1 unit of difference
+			return "\(locKey)\(locKey)"
+		}
+	}
+	
+	
+	internal var localizedKey: String {
+		switch self {
+		case .year:			return "y"
+		case .month:		return "m"
+		case .weekOfYear:	return "w"
+		case .day:			return "d"
+		case .hour:			return "h"
+		case .minute:		return "M"
+		case .second:		return "s"
+		default:
+			return ""
+		}
+	}
+	
+}
+
+
+/// Time interval reference
+///
+/// - start: start of the specified component
+/// - end: end of the specified component
+/// - auto: value is the result of the operation
+public enum TimeReference {
+	case start
+	case end
+	case auto
+}
+
+
+/// Rounding mode of the interval
+///
+/// - round: round
+/// - ceil: ceil
+/// - floor: floor
+public enum IntervalRoundingType {
+	case round
+	case ceil
+	case floor
+}
+
+public enum IntervalType {
+	case seconds(_: Int)
+	case minutes(_: Int)
+	
+	internal var seconds: TimeInterval {
+		switch self {
+		case .seconds(let secs):	return TimeInterval(secs)
+		case .minutes(let mins):	return TimeInterval(mins * 60)
+		}
+	}
+}
 
 /// This define the weekdays
 ///
@@ -57,7 +116,7 @@ public enum WeekDay: Int {
 ///						want to save.
 ///
 /// - returns: the instance you have created into the current thread
-internal func localThreadSingleton<T: AnyObject>(key: String, create: (Void) -> T) -> T {
+internal func localThreadSingleton<T: AnyObject>(key: String, create: () -> T) -> T {
 	if let cachedObj = Thread.current.threadDictionary[key] as? T {
 		return cachedObj
 	} else {
@@ -82,19 +141,28 @@ public enum DateError: Error {
 	case DifferentCalendar
 	case MissingRsrcBundle
 	case FailedToSetComponent(Calendar.Component)
+	case InvalidLocalizationFile
 }
 
 
 /// Available date formats used to parse strings and format date into string
 ///
-/// - custom:   custom format expressed in Unicode tr35-31 (see http://www.unicode.org/reports/tr35/tr35-31/tr35-dates.html#Date_Format_Patterns and Apple's Date Formatting Guide)
-/// - iso8601:  iso8601 date format (see https://en.wikipedia.org/wiki/ISO_8601)
+/// - custom:   custom format expressed in Unicode tr35-31 (see http://www.unicode.org/reports/tr35/tr35-31/tr35-dates.html#Date_Format_Patterns and Apple's Date Formatting Guide). Formatter uses heuristics to guess the date if it's invalid.
+///				This may end in a wrong parsed date. Use `strict` to disable heuristics parsing.
+/// - strict:	strict format is like custom but does not apply heuristics to guess at the date which is intended by the string.
+///				So, if you pass an invalid date (like 1999-02-31) formatter fails instead of returning guessing date (in our case
+///				1999-03-03).
+/// - iso8601:  ISO8601 date format (see https://en.wikipedia.org/wiki/ISO_8601).
+/// - iso8601Auto:	ISO8601 date format. You should use it to parse a date (parsers evaluate automatically the format of
+///					the ISO8601 string). Passed as options to transform a date to string it's equal to [.withInternetDateTime] options.
 /// - extended: extended date format ("eee dd-MMM-yyyy GG HH:mm:ss.SSS zzz")
 /// - rss:      RSS and AltRSS date format
 /// - dotNET:   .NET date format
 public enum DateFormat {
 	case custom(String)
+	case strict(String)
 	case iso8601(options: ISO8601DateTimeFormatter.Options)
+	case iso8601Auto
 	case extended
 	case rss(alt: Bool)
 	case dotNET
@@ -156,8 +224,8 @@ public struct ComponentsFormatterOptions {
 	}
 }
 
-private let SECONDS_IN_MINUTE: TimeInterval = 60
-private let SECONDS_IN_HOUR: TimeInterval = SECONDS_IN_MINUTE * 60
-private let SECONDS_IN_DAY: TimeInterval = SECONDS_IN_HOUR * 24
-private let SECONDS_IN_WEEK: TimeInterval = SECONDS_IN_DAY * 7
+internal let SECONDS_IN_MINUTE: TimeInterval = 60
+internal let SECONDS_IN_HOUR: TimeInterval = SECONDS_IN_MINUTE * 60
+internal let SECONDS_IN_DAY: TimeInterval = SECONDS_IN_HOUR * 24
+internal let SECONDS_IN_WEEK: TimeInterval = SECONDS_IN_DAY * 7
 

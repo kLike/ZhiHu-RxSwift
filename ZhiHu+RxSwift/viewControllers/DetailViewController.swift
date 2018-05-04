@@ -25,8 +25,13 @@ class DetailViewController: UIViewController {
         $0.frame = CGRect.init(x: 0, y: 0, width: screenW, height: 20)
         $0.isHidden = true
     }
+    var statusLight = true {
+        didSet {
+            setNeedsStatusBarAppearanceUpdate()
+        }
+    }
     
-    let provider = RxMoyaProvider<ApiManager>()
+    let provider = MoyaProvider<ApiManager>()
     let dispose = DisposeBag()
     var id = Int() {
         didSet {
@@ -68,18 +73,21 @@ class DetailViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        navigationController?.navigationBar.isHidden = true
         navigationController?.interactivePopGestureRecognizer?.delegate = nil
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        navigationController?.navigationBar.isHidden = false
         UIApplication.shared.statusBarStyle = .lightContent
     }
     
     override func viewDidAppear(_ animated: Bool) {
         scrollViewDidScroll(webview.scrollView)
     }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return statusLight ? .lightContent : .default
+    }
+    
 }
 
 extension DetailViewController: UIScrollViewDelegate {
@@ -91,10 +99,13 @@ extension DetailViewController: UIScrollViewDelegate {
         if scrollView.contentOffset.y > 180 {
             view.bringSubview(toFront: statusBackView)
             statusBackView.isHidden = false
-            UIApplication.shared.statusBarStyle = .default
+            statusLight = false
         } else {
             statusBackView.isHidden = true
-            UIApplication.shared.statusBarStyle = .lightContent
+            statusLight = true
+        }
+        if webview.img.isHidden {
+            statusLight = false
         }
     }
     
@@ -139,10 +150,10 @@ extension DetailViewController {
     }
     
     func loadData() {
-        provider
+        provider.rx
             .request(.getNewsDesc(id))
             .mapModel(NewsDetailModel.self)
-            .subscribe(onNext: { (model) in
+            .subscribe(onSuccess: { (model) in
                 if let image = model.image {
                     self.webview.img.kf.setImage(with: URL.init(string: image))
                     self.webview.titleLab.text = model.title
@@ -153,14 +164,16 @@ extension DetailViewController {
                 if let image_source = model.image_source {
                     self.webview.imgLab.text = "图片: " + image_source
                 }
-                if (model.title?.characters.count)! > 16 {
-                   self.webview.titleLab.frame = CGRect.init(x: 15, y: 120, width: screenW - 30, height: 55)
+                if (model.title?.count)! > 16 {
+                    self.webview.titleLab.frame = CGRect.init(x: 15, y: 120, width: screenW - 30, height: 55)
                 }
                 OperationQueue.main.addOperation {
                     self.webview.loadHTMLString(self.concatHTML(css: model.css!, body: model.body!), baseURL: nil)
                 }
+            }, onError: { (_) in
+                
             })
-            .addDisposableTo(dispose)
+            .disposed(by: dispose)
     }
     
     private func concatHTML(css: [String], body: String) -> String {

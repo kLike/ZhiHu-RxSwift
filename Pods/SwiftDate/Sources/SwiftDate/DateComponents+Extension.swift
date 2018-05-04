@@ -1,26 +1,11 @@
+// SwiftDate
+// Manage Date/Time & Timezone in Swift
 //
-//	SwiftDate, Full featured Swift date library for parsing, validating, manipulating, and formatting dates and timezones.
-//	Created by:				Daniele Margutti
-//	Main contributors:		Jeroen Houtzager
+// Created by: Daniele Margutti
+// Email: <hello@danielemargutti.com>
+// Web: <http://www.danielemargutti.com>
 //
-//
-//	Permission is hereby granted, free of charge, to any person obtaining a copy
-//	of this software and associated documentation files (the "Software"), to deal
-//	in the Software without restriction, including without limitation the rights
-//	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-//	copies of the Software, and to permit persons to whom the Software is
-//	furnished to do so, subject to the following conditions:
-//
-//	The above copyright notice and this permission notice shall be included in
-//	all copies or substantial portions of the Software.
-//
-//	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-//	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-//	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-//	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-//	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-//	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-//	THE SOFTWARE.
+// Licensed under MIT License.
 
 import Foundation
 
@@ -102,11 +87,7 @@ public extension DateComponents {
 	/// It's the same of `DateInRegion(components:)` init func but it may return nil (instead of throwing an exception)
 	/// if a valid date cannot be produced.
 	public var dateInRegion: DateInRegion? {
-		do {
-			return try DateInRegion(components: self)
-		} catch {
-			return nil
-		}
+		return DateInRegion(components: self)
 	}
 	
 	
@@ -129,6 +110,13 @@ public extension DateComponents {
 			if left != nil && right != nil && left != Int(NSDateComponentUndefined) && right != Int(NSDateComponentUndefined) {
 				let value = left! + (right! * multipler)
 				newCmps.setValue(value, for: component)
+			} else {
+				if left != nil && left != Int(NSDateComponentUndefined) {
+					newCmps.setValue(left!, for: component)
+				}
+				if right != nil && right != Int(NSDateComponentUndefined) {
+					newCmps.setValue(right!, for: component)
+				}
 			}
 		}
 		return newCmps

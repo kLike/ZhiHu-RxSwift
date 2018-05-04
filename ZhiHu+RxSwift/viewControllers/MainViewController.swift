@@ -13,7 +13,7 @@ import RxSwift
 
 class MainViewController: UITabBarController {
 
-    let provider = RxMoyaProvider<ApiManager>()
+    let provider = MoyaProvider<ApiManager>()
     let launchView = UIImageView()
     let dispose = DisposeBag()
     
@@ -29,10 +29,10 @@ class MainViewController: UITabBarController {
         launchView.backgroundColor = UIColor.black
         view.addSubview(launchView)
         
-        provider
+        provider.rx
             .request(.getLaunchImg)
             .mapModel(LaunchModel.self)
-            .subscribe(onNext: { (model) in
+            .subscribe(onSuccess: { (model) in
                 if let imgModel = model.creatives?.first {
                     self.launchView.kf.setImage(with: URL.init(string: imgModel.url!), placeholder: nil, options: nil, progressBlock: nil, completionHandler: { (_, _, _, _) in
                         UIView.animate(withDuration: 1.5, animations: {
@@ -49,7 +49,7 @@ class MainViewController: UITabBarController {
                     self.launchView.removeFromSuperview()
                 }
             })
-            .addDisposableTo(dispose)
+            .disposed(by: dispose)
         
     }
     

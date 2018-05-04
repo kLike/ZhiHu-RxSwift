@@ -1,38 +1,100 @@
+// SwiftDate
+// Manage Date/Time & Timezone in Swift
 //
-//	SwiftDate, Full featured Swift date library for parsing, validating, manipulating, and formatting dates and timezones.
-//	Created by:				Daniele Margutti
-//	Main contributors:		Jeroen Houtzager
+// Created by: Daniele Margutti
+// Email: <hello@danielemargutti.com>
+// Web: <http://www.danielemargutti.com>
 //
-//
-//	Permission is hereby granted, free of charge, to any person obtaining a copy
-//	of this software and associated documentation files (the "Software"), to deal
-//	in the Software without restriction, including without limitation the rights
-//	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-//	copies of the Software, and to permit persons to whom the Software is
-//	furnished to do so, subject to the following conditions:
-//
-//	The above copyright notice and this permission notice shall be included in
-//	all copies or substantial portions of the Software.
-//
-//	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-//	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-//	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-//	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-//	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-//	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-//	THE SOFTWARE.
+// Licensed under MIT License.
 
 import Foundation
 
 // MARK: - CalendarName Shortcut
 
 /// This enum allows you set a valid calendar using swift's type safe support
-public enum CalendarName {
+public enum CalendarName: RawRepresentable {
+	public typealias RawValue = String
+	
 	case current, currentAutoUpdating
 	case gregorian, buddhist, chinese, coptic, ethiopicAmeteMihret, ethiopicAmeteAlem, hebrew,
 	iso8601, indian, islamic, islamicCivil, japanese, persian, republicOfChina, islamicTabular,
 	islamicUmmAlQura
 	
+	/// Raw value of the calendar
+	public var rawValue: RawValue {
+		switch self {
+		case .currentAutoUpdating:		return "current_autoupdating"
+		case .current:					return "current"
+		case .gregorian:				return "gregorian"
+		case .buddhist:					return "buddhist"
+		case .chinese:					return "chinese"
+		case .coptic:					return "coptic"
+		case .ethiopicAmeteMihret:		return "ethiopicAmeteMihret"
+		case .ethiopicAmeteAlem:		return "ethiopicAmeteAlem"
+		case .hebrew:					return "hebrew"
+		case .iso8601:					return "iso8601"
+		case .indian:					return "indian"
+		case .islamic:					return "islamic"
+		case .islamicCivil:				return "islamicCivil"
+		case .japanese:					return "japanese"
+		case .persian:					return "persian"
+		case .republicOfChina:			return "republicOfChina"
+		case .islamicTabular:			return "islamicTabular"
+		case .islamicUmmAlQura:			return "islamicUmmAlQura"
+		}
+	}
+	
+	// Initialize a new CalendarName from raw string value. If valid calendar can be created `nil` is returned
+	public init?(rawValue: RawValue) {
+		switch rawValue {
+		case CalendarName.currentAutoUpdating.rawValue:			self = .currentAutoUpdating
+		case CalendarName.current.rawValue:						self = .current
+		case CalendarName.gregorian.rawValue:					self = .gregorian
+		case CalendarName.buddhist.rawValue:					self = .buddhist
+		case CalendarName.ethiopicAmeteMihret.rawValue:			self = .ethiopicAmeteMihret
+		case CalendarName.ethiopicAmeteAlem.rawValue:			self = .ethiopicAmeteAlem
+		case CalendarName.hebrew.rawValue:						self = .hebrew
+		case CalendarName.iso8601.rawValue:						self = .iso8601
+		case CalendarName.indian.rawValue:						self = .indian
+		case CalendarName.islamic.rawValue:						self = .islamic
+		case CalendarName.islamicCivil.rawValue:				self = .islamicCivil
+		case CalendarName.japanese.rawValue:					self = .japanese
+		case CalendarName.persian.rawValue:						self = .persian
+		case CalendarName.republicOfChina.rawValue:				self = .republicOfChina
+		case CalendarName.islamicTabular.rawValue:				self = .islamicTabular
+		case CalendarName.islamicUmmAlQura.rawValue:			self = .islamicUmmAlQura
+		default: return nil
+		}
+	}
+	
+	/// Initialize a new CalendarName from identifier
+	///
+	/// - Parameter identifier: identifier of the calendar, if `nil` `autoupdatingCurrent` calendar is set
+	public init(_ identifier: Calendar.Identifier?) {
+		guard let id = identifier else {
+			self = CalendarName.currentAutoUpdating
+			return
+		}
+		
+		switch id {
+		case .gregorian:				self = CalendarName.gregorian
+		case .buddhist:					self = CalendarName.buddhist
+		case .chinese:					self = CalendarName.chinese
+		case .coptic:					self = CalendarName.coptic
+		case .ethiopicAmeteMihret:		self = CalendarName.ethiopicAmeteMihret
+		case .ethiopicAmeteAlem:		self = CalendarName.ethiopicAmeteAlem
+		case .hebrew:					self = CalendarName.hebrew
+		case .iso8601:					self = CalendarName.iso8601
+		case .indian:					self = CalendarName.indian
+		case .islamic:					self = CalendarName.islamic
+		case .islamicCivil:				self = CalendarName.islamicCivil
+		case .japanese:					self = CalendarName.japanese
+		case .persian:					self = CalendarName.persian
+		case .republicOfChina:			self = CalendarName.republicOfChina
+		case .islamicTabular:			self = CalendarName.islamicTabular
+		case .islamicUmmAlQura:			self = CalendarName.islamicUmmAlQura
+		}
+	}
 	
 	/// Return a new `Calendar` instance from a given identifier
 	public var calendar: Calendar {
@@ -58,6 +120,11 @@ public enum CalendarName {
 		case .islamicUmmAlQura:		identifier = Calendar.Identifier.islamicUmmAlQura
 		}
 		return Calendar(identifier: identifier)
+	}
+	
+	//	Identifier of the calendar
+	public var identifier: Calendar.Identifier {
+		return self.calendar.identifier
 	}
 }
 
@@ -153,9 +220,9 @@ extension Calendar {
 		let res: Bool = withUnsafeMutablePointer(to: &start) { startp -> Bool in
 			return withUnsafeMutablePointer(to: &ti) { tip -> Bool in
 				let startPtr: UnsafeMutablePointer<CFAbsoluteTime> =
-					unsafeBitCast(startp, to: UnsafeMutablePointer<CFAbsoluteTime>.self)
+				startp
 				let tiPtr: UnsafeMutablePointer<CFTimeInterval> =
-					unsafeBitCast(tip, to: UnsafeMutablePointer<CFTimeInterval>.self)
+				tip
 				return CFCalendarGetTimeRangeOfUnit(cfObject, component.cfValue,
 				                                    date.timeIntervalSinceReferenceDate, startPtr, tiPtr)
 			}

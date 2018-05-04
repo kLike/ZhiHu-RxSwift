@@ -17,12 +17,17 @@ import Then
 
 class HomeViewController: UIViewController {
 
-    let provider = RxMoyaProvider<ApiManager>()
-    let dataSource = RxTableViewSectionedReloadDataSource<SectionModel<String, storyModel>>()
+    let provider = MoyaProvider<ApiManager>()
+    let dataSource = RxTableViewSectionedReloadDataSource<SectionModel<String, storyModel>>(configureCell: { (dataSource, tv, indexPath, model) in
+        let cell = tv.dequeueReusableCell(withIdentifier: "ListTableViewCell") as! ListTableViewCell
+        cell.title.text = model.title
+        cell.img.kf.setImage(with: URL.init(string: (model.images?.first)!))
+        cell.morepicImg.isHidden = !model.multipic
+        return cell
+    })
     let dispose = DisposeBag()
     let dataArr = Variable([SectionModel<String, storyModel>]())
     var newsDate = ""
-    var barImg = UIView()
     let titleNum = Variable(0)
     var refreshView: RefreshView?
     let menuView = MenuViewController.shareInstance
@@ -31,8 +36,12 @@ class HomeViewController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var bannerView: BannerView!
-    @IBOutlet weak var menuBtn: UIBarButtonItem!
     @IBOutlet weak var pageControl: UIPageControl!
+    @IBOutlet weak var customNav: UIView!
+    @IBOutlet weak var headView: UIView!
+    @IBOutlet weak var customNavHeight: NSLayoutConstraint!
+    @IBOutlet weak var menuButton: UIButton!
+    @IBOutlet weak var titleLab: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,22 +50,15 @@ class HomeViewController: UIViewController {
         setBarUI()
         addRefresh()
         
-        dataSource.configureCell = { (dataSource, tv, indexPath, model) in
-            let cell = tv.dequeueReusableCell(withIdentifier: "ListTableViewCell") as! ListTableViewCell
-            cell.title.text = model.title
-            cell.img.kf.setImage(with: URL.init(string: (model.images?.first)!))
-            cell.morepicImg.isHidden = !model.multipic
-            return cell
-        }
-        
         dataArr
             .asObservable()
-            .bindTo(tableView.rx.items(dataSource: dataSource))
-            .addDisposableTo(dispose)
+            .bind(to: tableView.rx.items(dataSource: dataSource))
+            .disposed(by: dispose)
         
         tableView.rx
             .modelSelected(storyModel.self)
             .subscribe(onNext: { (model) in
+                self.menuView.showView = false
                 self.tableView.deselectRow(at: self.tableView.indexPathForSelectedRow!, animated: true)
                 let detailVc = DetailViewController()
                 self.dataArr.value.forEach { (sectionModel) in
@@ -67,16 +69,16 @@ class HomeViewController: UIViewController {
                 detailVc.id = model.id!
                 self.navigationController?.pushViewController(detailVc, animated: true)
             })
-            .addDisposableTo(dispose)
+            .disposed(by: dispose)
         
         tableView.rx
             .setDelegate(self)
-            .addDisposableTo(dispose)
+            .disposed(by: dispose)
         
-        menuBtn.rx
+        menuButton.rx
             .tap
             .subscribe(onNext: { self.menuView.showView = !self.menuView.showView })
-            .addDisposableTo(dispose)
+            .disposed(by: dispose)
         
         titleNum
             .asObservable()
@@ -84,13 +86,14 @@ class HomeViewController: UIViewController {
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { (num) in
                 if num == 0 {
-                    self.title = "今日要闻"
+                    self.titleLab.text = "今日要闻"
                 } else {
-                    let date = try! DateInRegion.init(string: self.dataSource[num].model, format: DateFormat.custom("yyyyMMdd"))
-                    self.title = "\(date.month)月\(date.day)日 \(date.weekday.toWeekday())"
+                    if let date = DateInRegion(string: self.dataSource[num].model, format: DateFormat.custom("yyyyMMdd")) {
+                        self.titleLab.text = "\(date.month)月\(date.day)日 \(date.weekday.toWeekday())"
+                    }
                 }
             })
-            .addDisposableTo(dispose)
+            .disposed(by: dispose)
         
     }
     
@@ -119,10 +122,10 @@ extension HomeViewController {
 //        
 //        loadNewDataEvent.onNext()
         
-        provider
+        provider.rx
             .request(.getNewsList)
             .mapModel(listModel.self)
-            .subscribe(onNext: { (model) in
+            .subscribe(onSuccess: { (model) in
                 self.dataArr.value = [SectionModel(model: model.date!, items: model.stories!)]
                 self.newsDate = model.date!
                 var arr = model.top_stories!
@@ -132,33 +135,42 @@ extension HomeViewController {
                 self.pageControl.numberOfPages = model.top_stories!.count
                 self.refreshView?.endRefresh()
             })
-            .addDisposableTo(dispose)
+            .disposed(by: dispose)
     }
     
     func loadMoreData() {
-        provider
+        provider.rx
             .request(.getMoreNews(newsDate))
             .mapModel(listModel.self)
-            .subscribe(onNext: { (model) in
+            .subscribe(onSuccess: { (model) in
                 self.dataArr.value.append(SectionModel(model: model.date!, items: model.stories!))
                 self.newsDate = model.date!
             })
-            .addDisposableTo(dispose)
+            .disposed(by: dispose)
     }
     
     func setBarUI() {
-        barImg = (navigationController?.navigationBar.subviews.first)!
-        barImg.alpha = 0
-        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
-        navigationController?.navigationBar.barTintColor = UIColor.rgb(63, 141, 208)
-        navigationController?.navigationBar.shadowImage = UIImage()
-        navigationController?.navigationBar.isTranslucent = false
-        tableView.frame = CGRect.init(x: 0, y: -64, width: screenW, height: screenH)
+        customNavHeight.constant = UIApplication.shared.statusBarFrame.size.height + 44
+        tableView.frame = CGRect.init(x: 0, y: 0, width: screenW, height: screenH)
+//        if kNavigationBarH > 64 {
+//            headView.frame = CGRect.init(x: 0, y: 0, width: screenW, height: 200 + kNavigationBarH - 64)
+//            tableView.tableHeaderView = headView
+//        }
+        
         bannerView.bannerDelegate = self
         UIApplication.shared.keyWindow?.addSubview(menuView.view)
         menuView.bindtoNav = navigationController?.tabBarController
         view.addGestureRecognizer(UIPanGestureRecognizer(target:self, action:#selector(panGesture(pan:))))
         menuView.view.addGestureRecognizer(UIPanGestureRecognizer(target:self, action:#selector(panGesture(pan:))))
+        if #available(iOS 11.0, *) {
+            tableView.contentInsetAdjustmentBehavior = .never
+        } else {
+            automaticallyAdjustsScrollViewInsets = false
+        }
+    }
+    
+    override func viewDidLayoutSubviews() {
+        
     }
     
     func panGesture(pan: UIPanGestureRecognizer) {
@@ -166,11 +178,16 @@ extension HomeViewController {
     }
     
     func addRefresh() {
-        refreshView = RefreshView.init(frame: CGRect.init(x: 118, y: -42, width: 40, height: 40))
+        refreshView = RefreshView.init(frame: CGRect.init(x: 118, y: UIApplication.shared.statusBarFrame.size.height + 44 - 50, width: 40, height: 40))
+        refreshView?.center.y = UIApplication.shared.statusBarFrame.size.height + 44 - 20.5
         refreshView?.backgroundColor = UIColor.clear
-        view.addSubview(refreshView!)
+        customNav.addSubview(refreshView!)
     }
     
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+
 }
 
 extension HomeViewController: UITableViewDelegate {
@@ -179,9 +196,7 @@ extension HomeViewController: UITableViewDelegate {
         if indexPath.section == dataArr.value.count - 1 && indexPath.row == 0 {
             loadMoreData()
         }
-        DispatchQueue.global().async {
-            self.titleNum.value = (tableView.indexPathsForVisibleRows?.reduce(Int.max) { (result, ind) -> Int in return min(result, ind.section) })!
-        }
+        self.titleNum.value = (tableView.indexPathsForVisibleRows?.reduce(Int.max) { (result, ind) -> Int in return min(result, ind.section) })!
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -192,8 +207,9 @@ extension HomeViewController: UITableViewDelegate {
                 $0.textColor = UIColor.white
                 $0.font = UIFont.systemFont(ofSize: 15)
                 $0.textAlignment = .center
-                let date = try! DateInRegion.init(string: dataSource[section].model, format: DateFormat.custom("yyyyMMdd"))
-                $0.text = "\(date.month)月\(date.day)日 \(date.weekday.toWeekday())"
+                if let date = DateInRegion(string: dataSource[section].model, format: DateFormat.custom("yyyyMMdd")) {
+                    $0.text = "\(date.month)月\(date.day)日 \(date.weekday.toWeekday())"
+                }
             }
         }
         return UIView()
@@ -216,7 +232,7 @@ extension HomeViewController: UIScrollViewDelegate {
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         bannerView.offY.value = Double(scrollView.contentOffset.y)
-        barImg.alpha = scrollView.contentOffset.y / 200
+        customNav.backgroundColor = UIColor.colorFromHex(0x3F8DD0).withAlphaComponent(scrollView.contentOffset.y / 200)
         refreshView?.pullToRefresh(progress: -scrollView.contentOffset.y / 64)
     }
     
@@ -236,7 +252,9 @@ extension HomeViewController: UIScrollViewDelegate {
 }
 
 extension HomeViewController: BannerDelegate {
+    
     func selectedItem(model: storyModel) {
+        menuView.showView = false
         let detailVc = DetailViewController()
         self.dataArr.value.forEach { (sectionModel) in
             sectionModel.items.forEach({ (storyModel) in
@@ -250,6 +268,7 @@ extension HomeViewController: BannerDelegate {
     func scrollTo(index: Int) {
         pageControl.currentPage = index
     }
+    
 }
 
 

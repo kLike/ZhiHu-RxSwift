@@ -17,7 +17,7 @@ class MenuViewController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
     
-    let provider = RxMoyaProvider<ApiManager>()
+    let provider = MoyaProvider<ApiManager>()
     let dispose = DisposeBag()
     let themeArr = Variable([ThemeModel]())
     var bindtoNav: UITabBarController?
@@ -32,27 +32,27 @@ class MenuViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        provider
+        provider.rx
             .request(.getThemeList)
             .mapModel(ThemeResponseModel.self)
-            .subscribe(onNext: { (model) in
+            .subscribe(onSuccess: { (model) in
                 self.themeArr.value = model.others!
                 var model = ThemeModel()
                 model.name = "首页"
                 self.themeArr.value.insert(model, at: 0)
                 self.tableView.selectRow(at: IndexPath.init(row: 0, section: 0), animated: true, scrollPosition: .top)
             })
-            .addDisposableTo(dispose)
+            .disposed(by: dispose)
         
         themeArr
             .asObservable()
-            .bindTo(tableView.rx.items(cellIdentifier: "ThemeTableViewCell", cellType: ThemeTableViewCell.self)) {
+            .bind(to: tableView.rx.items(cellIdentifier: "ThemeTableViewCell", cellType: ThemeTableViewCell.self)) {
                 row, model, cell in
                 cell.name.text = model.name
                 cell.homeIcon.isHidden = row == 0 ? false : true
                 cell.nameLeft.constant = row == 0 ? 50 : 15
         }
-            .addDisposableTo(dispose)
+            .disposed(by: dispose)
         
         tableView.rx
             .modelSelected(ThemeModel.self)
@@ -60,7 +60,7 @@ class MenuViewController: UIViewController {
                 self.showView = false
                 self.showThemeVC(model)
             })
-            .addDisposableTo(dispose)
+            .disposed(by: dispose)
     }
 
 }
@@ -152,7 +152,7 @@ extension MenuViewController {
         let view = UIApplication.shared.keyWindow?.subviews.first
         let menuView = UIApplication.shared.keyWindow?.subviews.last
         UIApplication.shared.keyWindow?.bringSubview(toFront: (UIApplication.shared.keyWindow?.subviews[1])!)
-        UIView.animate(withDuration: 0.5, animations: { 
+        UIView.animate(withDuration: 0.3, animations: {
             view?.transform = CGAffineTransform.init(translationX: 225, y: 0)
             menuView?.transform = (view?.transform)!
         })

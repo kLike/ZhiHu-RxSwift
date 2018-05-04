@@ -1,26 +1,11 @@
+// SwiftDate
+// Manage Date/Time & Timezone in Swift
 //
-//	SwiftDate, Full featured Swift date library for parsing, validating, manipulating, and formatting dates and timezones.
-//	Created by:				Daniele Margutti
-//	Main contributors:		Jeroen Houtzager
+// Created by: Daniele Margutti
+// Email: <hello@danielemargutti.com>
+// Web: <http://www.danielemargutti.com>
 //
-//
-//	Permission is hereby granted, free of charge, to any person obtaining a copy
-//	of this software and associated documentation files (the "Software"), to deal
-//	in the Software without restriction, including without limitation the rights
-//	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-//	copies of the Software, and to permit persons to whom the Software is
-//	furnished to do so, subject to the following conditions:
-//
-//	The above copyright notice and this permission notice shall be included in
-//	all copies or substantial portions of the Software.
-//
-//	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-//	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-//	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-//	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-//	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-//	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-//	THE SOFTWARE.
+// Licensed under MIT License.
 
 import Foundation
 
@@ -58,9 +43,14 @@ public extension DateInRegion {
 		switch format {
 		case .custom(let format):
 			return self.formatters.dateFormatter(format: format).string(from: self.absoluteDate)
+		case .strict(let format):
+			return self.formatters.dateFormatter(format: format).string(from: self.absoluteDate)
 		case .iso8601(let options):
-			let formatter = self.formatters.isoFormatter(options: options)
-			return formatter.string(from: self.absoluteDate)
+			let formatter = self.formatters.isoFormatter()
+			return formatter.string(from: self.absoluteDate, tz: self.region.timeZone, options: options)
+		case .iso8601Auto:
+			let formatter = self.formatters.isoFormatter()
+			return formatter.string(from: self.absoluteDate, tz: self.region.timeZone, options: [.withInternetDateTime])
 		case .rss(let isAltRSS):
 			let format = (isAltRSS ? "d MMM yyyy HH:mm:ss ZZZ" : "EEE, d MMM yyyy HH:mm:ss ZZZ")
 			return self.formatters.dateFormatter(format: format).string(from: self.absoluteDate)
@@ -68,10 +58,7 @@ public extension DateInRegion {
 			let format = "eee dd-MMM-yyyy GG HH:mm:ss.SSS zzz"
 			return self.formatters.dateFormatter(format: format).string(from: self.absoluteDate)
 		case .dotNET:
-			let milliseconds = (self.absoluteDate.timeIntervalSince1970 * 1000.0)
-			let tzOffsets = (self.region.timeZone.secondsFromGMT(for: self.absoluteDate) / 3600)
-			let formattedStr = String(format: "/Date(%.0f%+03d00)/", milliseconds,tzOffsets)
-			return formattedStr
+			return DOTNETDateTimeFormatter.string(self)
 		}
 	}
 	
@@ -104,86 +91,56 @@ public extension DateInRegion {
 		return formatter.string(from: self.absoluteDate)
 	}
 	
-	
 	/// This method produces a colloquial representation of time elapsed between this `DateInRegion` (`self`) and
 	/// the current date (`Date()`)
 	///
-	/// - throws: throw an exception is colloquial string cannot be evaluated
-	///
+	/// - parameter style: style of output. If not specified `.full` is used
 	/// - returns: colloquial string representation
-	public func colloquialSinceNow() throws -> (colloquial: String, time: String?) {
+	/// - throws: throw an exception is colloquial string cannot be evaluated
+	@available(*, deprecated: 4.5.0, message: "Deprecated. Use colloquialSinceNow(options:) instead")
+	public func colloquialSinceNow(style: DateComponentsFormatter.UnitsStyle? = nil) throws -> (colloquial: String, time: String?) {
 		let now = DateInRegion(absoluteDate: Date(), in: self.region)
-		return try self.colloquial(toDate: now)
+		return try self.colloquial(toDate: now, style: style)
 	}
 	
+	/// This method produces a colloquial representation of time elapsed between this `DateInRegion` and
+	/// the current date (`Date()`).
+	///
+	/// - Parameter options: formatting options, `nil` to use default options
+	/// - Returns: String, `nil` if formatting fails
+	public func colloquialSinceNow(options: ColloquialDateFormatter.Options? = nil) -> String? {
+		let now = DateInRegion(absoluteDate: Date(), in: self.region)
+		return self.colloquial(toDate: now, options: options)
+	}
 	
 	/// This method produces a colloquial representation of time elapsed between this `DateInRegion` (`self`) and
 	/// another passed date.
 	///
-	/// - parameter date:      date to compare
-	///
-	/// - throws: throw an exception is colloquial string cannot be evaluated
-	///
+	/// - Parameters:
+	/// - parameter date: date to compare
+	/// - parameter style: style of output. If not specified `.full` is used
 	/// - returns: colloquial string representation
-	public func colloquial(toDate date: DateInRegion) throws -> (colloquial: String, time: String?) {
+	/// - throws: throw an exception is colloquial string cannot be evaluated
+	@available(*, deprecated: 4.5.0, message: "Deprecated. Use colloquial(toDate:options:) instead")
+	public func colloquial(toDate date: DateInRegion, style: DateComponentsFormatter.UnitsStyle? = nil) throws -> (colloquial: String, time: String?) {
 		let formatter = DateInRegionFormatter()
-		formatter.locale = self.region.locale
-		return try formatter.colloquial(from: self, to: date)
+		formatter.localization = Localization(locale: self.region.locale)
+		formatter.unitStyle = style ?? .full
+		if style == nil || style == .full || style == .spellOut {
+			return try formatter.colloquial(from: self, to: date)
+		} else {
+			return (try formatter.timeComponents(from: self, to: date),nil)
+		}
 	}
 	
-	/// This method produces a string by printing the interval between self and current Date and output a string where each
-	/// calendar component is printed.
+	/// This method produces a colloquial representation of time elapsed between `self` and another reference date.
 	///
-	/// - parameter unitStyle: style of the output string
-	/// - parameter max:       max number of the time components to write (nil means no limit)
-	/// - parameter zero:      the behaviour to use with zero value components
-	/// - parameter separator: separator string between components (default is ',')
-	///
-	/// - throws: throw an exception if time components cannot be evaluated
-	///
-	/// - returns: string with each time component
-	@available(*, deprecated: 4.0.3, message: "Use timeComponentsSinceNow(options:) instead")
-	public func timeComponentsSinceNow(unitStyle: DateComponentsFormatter.UnitsStyle = .short, max: Int? = nil, zero: DateZeroBehaviour? = nil, separator: String? = nil) throws -> String {
-		let now = DateInRegion(absoluteDate: Date(), in: self.region)
-		return try self.timeComponents(toDate: now, unitStyle: unitStyle, max: max, zero: zero, separator: separator)
-	}
-	
-	// This method produces a string by printing the interval between self and current Date and output a string where each
-	/// calendar component is printed.
-	///
-	/// - parameter options: options to format the output. Keep in mind: `.locale` will be overwritten by self's `region.locale`.
-	///
-	/// - throws: throw an exception if time components cannot be evaluated
-	///
-	/// - returns: string with each time component
-	public func timeComponentsSinceNow(options: ComponentsFormatterOptions? = nil) throws -> String {
-		let interval = self.absoluteDate.timeIntervalSinceNow
-		var optionsStruct = (options == nil ? ComponentsFormatterOptions() : options!)
-		optionsStruct.locale = self.region.locale
-		return try interval.string(options: optionsStruct, shared: self.formatters.useSharedFormatters)
-	}
-	
-	/// This method produces a string by printing the interval between self and another date and output a string where each
-	/// calendar component is printed.
-	///
-	/// - parameter toDate:	date to compare
-	/// - parameter unitStyle: style of the output string
-	/// - parameter max:       max number of the time components to write (nil means no limit)
-	/// - parameter zero:      the behaviour to use with zero value components
-	/// - parameter separator: separator string between components (default is ',')
-	///
-	/// - throws: throw an exception if time components cannot be evaluated
-	///
-	/// - returns: string with each time component
-	@available(*, deprecated: 4.0.3, message: "Use timeComponents(toDate:,options:) instead")
-	public func timeComponents(toDate date: DateInRegion, unitStyle: DateComponentsFormatter.UnitsStyle = .short, max: Int? = nil, zero: DateZeroBehaviour? = nil, separator: String? = nil) throws -> String {
-		let formatter = DateInRegionFormatter()
-		formatter.locale = self.region.locale
-		formatter.maxComponentCount = max
-		formatter.unitStyle = unitStyle
-		formatter.zeroBehavior = zero ?? .dropAll
-		formatter.unitSeparator = separator ?? ","
-		return try formatter.timeComponents(from: self, to: date)
+	/// - Parameters:
+	///   - date: reference date
+	///   - options: formatting options, `nil` to use default options
+	/// - Returns: String, `nil` if formatting fails
+	public func colloquial(toDate date: DateInRegion, options: ColloquialDateFormatter.Options? = nil) -> String? {
+		return ColloquialDateFormatter.colloquial(from: self, to: date, options: options)
 	}
 	
 	/// This method produces a string by printing the interval between self and another date and output a string where each
@@ -200,6 +157,21 @@ public extension DateInRegion {
 		var optionsStruct = (options == nil ? ComponentsFormatterOptions() : options!)
 		optionsStruct.locale = self.region.locale
 		optionsStruct.allowedUnits = optionsStruct.allowedUnits ?? optionsStruct.bestAllowedUnits(forInterval: interval)
+		return try interval.string(options: optionsStruct, shared: self.formatters.useSharedFormatters)
+	}
+	
+	// This method produces a string by printing the interval between self and current Date and output a string where each
+	/// calendar component is printed.
+	///
+	/// - parameter options: options to format the output. Keep in mind: `.locale` will be overwritten by self's `region.locale`.
+	///
+	/// - throws: throw an exception if time components cannot be evaluated
+	///
+	/// - returns: string with each time component
+	public func timeComponentsSinceNow(options: ComponentsFormatterOptions? = nil) throws -> String {
+		let interval = abs(self.absoluteDate.timeIntervalSinceNow)
+		var optionsStruct = (options == nil ? ComponentsFormatterOptions() : options!)
+		optionsStruct.locale = self.region.locale
 		return try interval.string(options: optionsStruct, shared: self.formatters.useSharedFormatters)
 	}
 }

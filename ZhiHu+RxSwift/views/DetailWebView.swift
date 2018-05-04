@@ -32,7 +32,7 @@ class DetailWebView: UIWebView {
         $0.textColor = UIColor.white
     }
     var previousLab = UILabel().then {
-        $0.frame = CGRect.init(x: 15, y: -30, width: screenW - 30, height: 20)
+        $0.frame = CGRect.init(x: 15, y: -38, width: screenW - 30, height: 20)
         $0.font = UIFont.systemFont(ofSize: 15)
         $0.text = "载入上一篇"
         $0.textAlignment = .center

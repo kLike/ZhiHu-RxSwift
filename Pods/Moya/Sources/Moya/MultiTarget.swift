@@ -5,46 +5,50 @@ public enum MultiTarget: TargetType {
     /// The embedded `TargetType`.
     case target(TargetType)
 
+    /// Initializes a `MultiTarget`.
     public init(_ target: TargetType) {
         self = MultiTarget.target(target)
     }
 
+    /// The embedded target's base `URL`.
     public var path: String {
         return target.path
     }
 
+    /// The baseURL of the embedded target.
     public var baseURL: URL {
         return target.baseURL
     }
 
+    /// The HTTP method of the embedded target.
     public var method: Moya.Method {
         return target.method
     }
 
-    public var parameters: [String: Any]? {
-        return target.parameters
-    }
-
-    public var parameterEncoding: ParameterEncoding {
-        return target.parameterEncoding
-    }
-
+    /// The sampleData of the embedded target.
     public var sampleData: Data {
         return target.sampleData
     }
 
+    /// The `Task` of the embedded target.
     public var task: Task {
         return target.task
     }
 
-    public var validate: Bool {
-        return target.validate
+    /// The `ValidationType` of the embedded target.
+    public var validationType: ValidationType {
+        return target.validationType
+    }
+
+    /// The headers of the embedded target.
+    public var headers: [String: String]? {
+        return target.headers
     }
 
     /// The embedded `TargetType`.
     public var target: TargetType {
         switch self {
-        case .target(let t): return t
+        case .target(let target): return target
         }
     }
 }

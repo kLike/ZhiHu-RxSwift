@@ -1,6 +1,6 @@
 // COLLOQUIAL STRINGD
 "colloquial_f_y"					=	"volgend jaar";		// year,future,singular: 	"next year"
-"colloquial_f_yy"					=	"over %d jaar";		// year,future,plural:		"on 2016"
+"colloquial_f_yy"					=	"in %d jaar";		// year,future,plural:		"on 2016"
 "colloquial_p_y"					=	"vorig jaar";		// year,past,singular:		"last year"
 "colloquial_p_yy"					=	"%d jaar geleden";	// year,past,plural:		"2015"
 
@@ -54,3 +54,9 @@
 "relevanttime_MM"					=	"";							// for colloquial minute(s) we have not any relevant time to print
 "relevanttime_s"					=	"";							// for colloquial seconds(s) we have not any relevant time to print
 "relevanttime_ss"					=	"";							// for colloquial seconds(s) we have not any relevant time to print
+
+// Distant ranges for time unit
+"distant_h" 						= "HH:mm";
+"distant_d" 						= "MM/dd";
+"distant_m" 						= "MM/yyyy";
+"distant_y" 						= "yyyy";

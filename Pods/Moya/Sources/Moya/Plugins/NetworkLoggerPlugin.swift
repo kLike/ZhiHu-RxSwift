@@ -9,17 +9,20 @@ public final class NetworkLoggerPlugin: PluginType {
     fileprivate let separator = ", "
     fileprivate let terminator = "\n"
     fileprivate let cURLTerminator = "\\\n"
-    fileprivate let output: (_ seperator: String, _ terminator: String, _ items: Any...) -> Void
+    fileprivate let output: (_ separator: String, _ terminator: String, _ items: Any...) -> Void
+    fileprivate let requestDataFormatter: ((Data) -> (String))?
     fileprivate let responseDataFormatter: ((Data) -> (Data))?
 
-    /// If true, also logs response body data.
+    /// A Boolean value determing whether response body data should be logged.
     public let isVerbose: Bool
     public let cURL: Bool
 
-    public init(verbose: Bool = false, cURL: Bool = false, output: @escaping (_ seperator: String, _ terminator: String, _ items: Any...) -> Void = NetworkLoggerPlugin.reversedPrint, responseDataFormatter: ((Data) -> (Data))? = nil) {
+    /// Initializes a NetworkLoggerPlugin.
+    public init(verbose: Bool = false, cURL: Bool = false, output: ((_ separator: String, _ terminator: String, _ items: Any...) -> Void)? = nil, requestDataFormatter: ((Data) -> (String))? = nil, responseDataFormatter: ((Data) -> (Data))? = nil) {
         self.cURL = cURL
         self.isVerbose = verbose
-        self.output = output
+        self.output = output ?? NetworkLoggerPlugin.reversedPrint
+        self.requestDataFormatter = requestDataFormatter
         self.responseDataFormatter = responseDataFormatter
     }
 
@@ -78,14 +81,14 @@ private extension NetworkLoggerPlugin {
             output += [format(loggerId, date: date, identifier: "HTTP Request Method", message: httpMethod)]
         }
 
-        if let body = request?.httpBody, let stringOutput = String(data: body, encoding: .utf8), isVerbose {
+        if let body = request?.httpBody, let stringOutput = requestDataFormatter?(body) ?? String(data: body, encoding: .utf8), isVerbose {
             output += [format(loggerId, date: date, identifier: "Request Body", message: stringOutput)]
         }
 
         return output
     }
 
-    func logNetworkResponse(_ response: URLResponse?, data: Data?, target: TargetType) -> [String] {
+    func logNetworkResponse(_ response: HTTPURLResponse?, data: Data?, target: TargetType) -> [String] {
         guard let response = response else {
            return [format(loggerId, date: date, identifier: "Response", message: "Received empty network response for \(target).")]
         }
@@ -103,7 +106,9 @@ private extension NetworkLoggerPlugin {
 }
 
 fileprivate extension NetworkLoggerPlugin {
-    static func reversedPrint(seperator: String, terminator: String, items: Any...) {
-        print(items, separator: seperator, terminator: terminator)
+    static func reversedPrint(_ separator: String, terminator: String, items: Any...) {
+        for item in items {
+            print(item, separator: separator, terminator: terminator)
+        }
     }
 }

@@ -31,7 +31,10 @@ public enum Result<T, Error: Swift.Error>: ResultProtocol, CustomStringConvertib
 	public init(attempt f: () throws -> T) {
 		do {
 			self = .success(try f())
-		} catch {
+		} catch var error {
+			if Error.self == AnyError.self {
+				error = AnyError(error)
+			}
 			self = .failure(error as! Error)
 		}
 	}
@@ -129,8 +132,17 @@ public func materialize<T>(_ f: () throws -> T) -> Result<T, NSError> {
 public func materialize<T>(_ f: @autoclosure () throws -> T) -> Result<T, NSError> {
 	do {
 		return .success(try f())
-	} catch let error as NSError {
-		return .failure(error)
+	} catch {
+// This isn't great, but it lets us maintain compatibility until this deprecated
+// method can be removed.
+#if _runtime(_ObjC)
+		return .failure(error as NSError)
+#else
+		// https://github.com/apple/swift-corelibs-foundation/blob/swift-3.0.2-RELEASE/Foundation/NSError.swift#L314
+		let userInfo = _swift_Foundation_getErrorDefaultUserInfo(error) as? [String: Any]
+		let nsError = NSError(domain: error._domain, code: error._code, userInfo: userInfo)
+		return .failure(nsError)
+#endif
 	}
 }
 
@@ -143,6 +155,7 @@ public func materialize<T>(_ f: @autoclosure () throws -> T) -> Result<T, NSErro
 /// This is convenient for wrapping Cocoa API which returns an object or `nil` + an error, by reference. e.g.:
 ///
 ///     Result.try { NSData(contentsOfURL: URL, options: .dataReadingMapped, error: $0) }
+@available(*, deprecated, message: "This will be removed in Result 4.0. Use `Result.init(attempt:)` instead. See https://github.com/antitypical/Result/issues/85 for the details.")
 public func `try`<T>(_ function: String = #function, file: String = #file, line: Int = #line, `try`: (NSErrorPointer) -> T?) -> Result<T, NSError> {
 	var error: NSError?
 	return `try`(&error).map(Result.success) ?? .failure(error ?? Result<T, NSError>.error(function: function, file: file, line: line))
@@ -153,6 +166,7 @@ public func `try`<T>(_ function: String = #function, file: String = #file, line:
 /// This is convenient for wrapping Cocoa API which returns a `Bool` + an error, by reference. e.g.:
 ///
 ///     Result.try { NSFileManager.defaultManager().removeItemAtURL(URL, error: $0) }
+@available(*, deprecated, message: "This will be removed in Result 4.0. Use `Result.init(attempt:)` instead. See https://github.com/antitypical/Result/issues/85 for the details.")
 public func `try`(_ function: String = #function, file: String = #file, line: Int = #line, `try`: (NSErrorPointer) -> Bool) -> Result<(), NSError> {
 	var error: NSError?
 	return `try`(&error) ?
@@ -162,9 +176,9 @@ public func `try`(_ function: String = #function, file: String = #file, line: In
 
 #endif
 
-// MARK: - ErrorProtocolConvertible conformance
+// MARK: - ErrorConvertible conformance
 	
-extension NSError: ErrorProtocolConvertible {
+extension NSError: ErrorConvertible {
 	public static func error(from error: Swift.Error) -> Self {
 		func cast<T: NSError>(_ error: Swift.Error) -> T {
 			return error as! T
@@ -202,7 +216,7 @@ public struct AnyError: Swift.Error {
 	}
 }
 
-extension AnyError: ErrorProtocolConvertible {
+extension AnyError: ErrorConvertible {
 	public static func error(from error: Error) -> AnyError {
 		return AnyError(error)
 	}
@@ -213,6 +227,31 @@ extension AnyError: CustomStringConvertible {
 		return String(describing: error)
 	}
 }
+
+// There appears to be a bug in Foundation on Linux which prevents this from working:
+// https://bugs.swift.org/browse/SR-3565
+// Don't forget to comment the tests back in when removing this check when it's fixed!
+#if !os(Linux)
+
+extension AnyError: LocalizedError {
+	public var errorDescription: String? {
+		return error.localizedDescription
+	}
+
+	public var failureReason: String? {
+		return (error as? LocalizedError)?.failureReason
+	}
+
+	public var helpAnchor: String? {
+		return (error as? LocalizedError)?.helpAnchor
+	}
+
+	public var recoverySuggestion: String? {
+		return (error as? LocalizedError)?.recoverySuggestion
+	}
+}
+
+#endif
 
 // MARK: - migration support
 extension Result {

@@ -25,14 +25,14 @@ class BannerView: UICollectionView {
 
         imgUrlArr
             .asObservable()
-            .bindTo(rx.items(cellIdentifier: "BannerCell", cellType: BannerCell.self)) {
+            .bind(to: rx.items(cellIdentifier: "BannerCell", cellType: BannerCell.self)) {
                 row, model, cell in
                 cell.img.kf.setImage(with: URL.init(string: model.image!))
                 cell.imgTitle.text = model.title!
             }
-            .addDisposableTo(dispose)
+            .disposed(by: dispose)
         
-        rx.setDelegate(self).addDisposableTo(dispose)
+        rx.setDelegate(self).disposed(by: dispose)
         
         offY
             .asObservable()
@@ -43,14 +43,14 @@ class BannerView: UICollectionView {
                     cell.img.frame.size.height = 200 - CGFloat.init(offy)
                 }
             })
-            .addDisposableTo(dispose)
+            .disposed(by: dispose)
         
         rx
             .modelSelected(storyModel.self)
             .subscribe(onNext: { (model) in
                 self.bannerDelegate?.selectedItem(model: model)
             })
-            .addDisposableTo(dispose)
+            .disposed(by: dispose)
         
     }
 

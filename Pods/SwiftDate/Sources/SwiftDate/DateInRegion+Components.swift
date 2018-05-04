@@ -1,26 +1,11 @@
+// SwiftDate
+// Manage Date/Time & Timezone in Swift
 //
-//	SwiftDate, Full featured Swift date library for parsing, validating, manipulating, and formatting dates and timezones.
-//	Created by:				Daniele Margutti
-//	Main contributors:		Jeroen Houtzager
+// Created by: Daniele Margutti
+// Email: <hello@danielemargutti.com>
+// Web: <http://www.danielemargutti.com>
 //
-//
-//	Permission is hereby granted, free of charge, to any person obtaining a copy
-//	of this software and associated documentation files (the "Software"), to deal
-//	in the Software without restriction, including without limitation the rights
-//	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-//	copies of the Software, and to permit persons to whom the Software is
-//	furnished to do so, subject to the following conditions:
-//
-//	The above copyright notice and this permission notice shall be included in
-//	all copies or substantial portions of the Software.
-//
-//	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-//	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-//	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-//	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-//	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-//	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-//	THE SOFTWARE.
+// Licensed under MIT License.
 
 
 import Foundation
@@ -144,6 +129,12 @@ extension DateInRegion {
 	/// - note: This value is interpreted in the context of the calendar and timezone with which it is used
 	public var weekdayName: String {
 		return self.formatters.dateFormatter(format: "EEEE").string(from: self.absoluteDate)
+	}
+	
+	/// Weekday short name
+	/// - note: This value is interpreted in the context of the calendar and timezone with which it is used
+	public var weekdayShortName: String {
+		return self.formatters.dateFormatter(format: "EE").string(from: self.absoluteDate)
 	}
 	
 	/// Number of days into current's date month expressed in current region calendar and locale
@@ -345,6 +336,38 @@ extension DateInRegion {
 	public var isInFuture: Bool {
 		return self.absoluteDate > Date()
 	}
+    
+    /// Returns whether the given date is in the morning.
+    ///
+    /// - note: This value is interpreted in the context of the calendar of the receiver
+    public var isMorning: Bool {
+        let hour = self.region.calendar.component(.hour, from: self.absoluteDate)
+        return hour >= 5 && hour < 12
+    }
+    
+    /// Returns whether the given date is in the afternoon.
+    ///
+    /// - note: This value is interpreted in the context of the calendar of the receiver
+    public var isAfternoon: Bool {
+        let hour = self.region.calendar.component(.hour, from: self.absoluteDate)
+        return hour >= 12 && hour < 17
+    }
+    
+    /// Returns whether the given date is in the evening.
+    ///
+    /// - note: This value is interpreted in the context of the calendar of the receiver
+    public var isEvening: Bool {
+        let hour = self.region.calendar.component(.hour, from: self.absoluteDate)
+        return hour >= 17 && hour < 21
+    }
+    
+    /// Returns whether the given date is in the night.
+    ///
+    /// - note: This value is interpreted in the context of the calendar of the receiver
+    public var isNight: Bool {
+        let hour = self.region.calendar.component(.hour, from: self.absoluteDate)
+        return hour >= 21 || hour < 5
+    }
 	
 	/// Returns whether the given date is on the same day as the receiver in the time zone and calendar of the receiver.
 	///
@@ -373,6 +396,7 @@ extension DateInRegion {
 	}
 	
 	/// Return a new instance of the date plus one month
+	@available(*, deprecated: 4.1.7, message: "Use nextMonth() function instead")
 	public var nextMonth: DateInRegion {
 		let refDate = self.startOfDay.absoluteDate
 		let nextMonth = self.region.calendar.date(byAdding: .month, value: 1, to: refDate)
@@ -380,10 +404,70 @@ extension DateInRegion {
 	}
 	
 	/// Return a new instance of the date minus one month
+	@available(*, deprecated: 4.1.7, message: "Use prevMonth() function instead")
 	public var prevMonth: DateInRegion {
 		let refDate = self.startOfDay.absoluteDate
 		let prevMonth = self.region.calendar.date(byAdding: .month, value: -1, to: refDate)
 		return DateInRegion(absoluteDate: prevMonth!, in: self.region)
+	}
+	
+	/// Return the date by adding one month to the current date
+	///
+	/// - Parameter time:	when `.auto` evaluated date is calculated by adding one month to the current date.
+	///						If you pass `.start` result date is the first day of the next month (at 00:00:00).
+	///						If you pass `.end` result date is the last day of the next month (at 23:59:59).
+	/// - Returns: the new date at the next month
+	public func nextMonth(at time: TimeReference = .auto) -> DateInRegion {
+		return dateByAdding(value: 1, to: .month, at: time)
+	}
+	
+	/// Return the date by subtracting one month from the current date
+	///
+	/// - Parameter time:	when `.auto` evaluated date is calculated by subtracting one month to the current date.
+	///						If you pass `.start` result date is the first day of the previous month (at 00:00:00).
+	///						If you pass `.end` result date is the last day of the previous month (at 23:59:59).
+	/// - Returns: the new date at the prev month
+	public func prevMonth(at time: TimeReference = .auto) -> DateInRegion {
+		return dateByAdding(value: -1, to: .month, at: time)
+	}
+	
+	/// Return the date by adding one week from the current date
+	///
+	/// - Parameter time:	when `.auto` evaluated date is calculated by adding one week to the current date.
+	///						If you pass `.start` result date is the first day of the next week (at 00:00:00).
+	///						If you pass `.end` result date is the last day of the next week (at 23:59:59).
+	/// - Returns: the new date at the next week
+	public func nextWeek(at time: TimeReference = .auto) -> DateInRegion {
+		return dateByAdding(value: 1, to: .weekOfYear, at: time)
+	}
+	
+	/// Return the date by subtracting one week from the current date
+	///
+	/// - Parameter time:	when `.auto` evaluated date is calculated by adding one week to the current date.
+	///						If you pass `.start` result date is the first day of the previous week (at 00:00:00).
+	///						If you pass `.end` result date is the last day of the previous week (at 23:59:59).
+	/// - Returns: the new date at the previous week
+	public func prevWeek(at time: TimeReference = .auto) -> DateInRegion {
+		return dateByAdding(value: -1, to: .weekOfYear, at: time)
+	}
+	
+	/// Internal function used to calculate the next/prev time component of a date
+	///
+	/// - Parameters:
+	///   - value: increment value
+	///	  - component: component to alter from current date
+	///   - reference: how the final date should be calculated (see `nextMonth()` or `prevMonth()` funcs for details)
+	/// - Returns: the new date
+	private func dateByAdding(value: Int, to component: Calendar.Component, at reference: TimeReference) -> DateInRegion {
+		let newAbsoluteDate = self.region.calendar.date(byAdding: component, value: value, to: self.absoluteDate)!
+		var newDate = DateInRegion(absoluteDate: newAbsoluteDate, in: self.region)
+		
+		switch reference {
+		case .start:	newDate = newDate.startOf(component: component).startOfDay
+		case .end:		newDate = newDate.endOf(component: component).endOfDay
+		case .auto:		break // unaltered, result of adding/subtracting `value` from date
+		}
+		return newDate
 	}
 	
 	/// Return the next weekday after today.
@@ -454,12 +538,12 @@ extension DateInRegion {
 	/// - parameter minute: the minute value
 	/// - parameter second: the second value
 	///
-	/// - throws: throw a `FailedToCalculate` exception of the new date cannot be evaluated.
-	///
-	/// - returns: a new `DateInRegion` object calculated at given time
-	public func atTime(hour: Int, minute: Int, second: Int) throws -> DateInRegion {
-		guard let newDate = self.region.calendar.date(bySettingHour: hour, minute: minute, second: second, of: self.absoluteDate) else {
-			throw DateError.FailedToCalculate
+	/// - returns: a new `DateInRegion` object calculated at given time; `nil` if date cannot be evaluated
+	public func atTime(hour: Int, minute: Int, second: Int) -> DateInRegion? {
+		let calendar = self.region.calendar
+		let absoluteDate = self.absoluteDate
+		guard let newDate = calendar.date(bySettingHour: hour, minute: minute, second: second, of: absoluteDate) else {
+			return nil
 		}
 		return DateInRegion(absoluteDate: newDate, in: self.region)
 	}
@@ -471,25 +555,44 @@ extension DateInRegion {
 	/// - parameter unit:  The unit to set with the given value
 	/// - parameter value: The value to set for the given calendar unit.
 	///
-	/// - throws: throw a `FailedToCalculate` exception of the new date cannot be evaluated.
-	///
 	/// - returns: a new `DateInRegion` object calculated at given unit value
-	public func at(unit: Calendar.Component, value: Int) throws -> DateInRegion {
+	public func at(unit: Calendar.Component, value: Int) -> DateInRegion? {
 		guard let newDate = self.region.calendar.date(bySetting: unit, value: value, of: self.absoluteDate) else {
-			throw DateError.FailedToCalculate
+			return nil
 		}
 		return DateInRegion(absoluteDate: newDate, in: self.region)
 	}
 	
+	
+	/// Create a new instance of the date by keeping passed calendar components and alter
+	///
+	/// - Parameters:
+	///   - values: values to alter in new instance
+	///   - keep: values to keep from self instance
+	/// - Returns: a new instance of `DateInRegion` with passed altered values
+	public func at(values: [Calendar.Component : Int], keep: Set<Calendar.Component>) -> DateInRegion? {
+		let calendar = self.region.calendar
+		var newComponents = calendar.dateComponents(keep, from: self.absoluteDate)
+	
+		values.forEach { newComponents.setValue($0.value, for: $0.key) }
+		
+		guard let calculatedDate = calendar.date(from: newComponents) else {
+			return nil
+		}
+		return DateInRegion(absoluteDate: calculatedDate, in: self.region)
+
+	}
 	
 	/// Create a new instance calculated by setting a list of components of a given date to given values (components
 	/// are evaluated serially - in order), while trying to keep lower components the same.
 	///
 	/// - parameter dict: a dictionary with `Calendar.Component` and it's value
 	///
-	/// - throws: throw a `FailedToSetComponent` exception.
+	/// - throws: throw a `FailedToCalculate` exception.
 	///
 	/// - returns: a new `DateInRegion` object calculated at given units values
+	@available(*, deprecated: 4.1.0, message: "This method has know issues. Use at(values:keep:) instead")
+	@discardableResult
 	public func at(unitsWithValues dict: [Calendar.Component : Int]) throws -> DateInRegion {
 		var calculatedDate = self.absoluteDate
 		try DateComponents.allComponents.forEach { component in
@@ -505,7 +608,7 @@ extension DateInRegion {
 	}
 	
 	
-	/// Returns a `DateInRegion` object representing a date that is the earliest from a given range
+	/// Returns a `DateInRegion` object representing a date that is the earliest (old) from a given range
 	/// of dates.
 	/// The dates are compared in absolute time, i.e. time zones, locales and calendars have no
 	/// effect on the comparison.
@@ -514,12 +617,12 @@ extension DateInRegion {
 	///
 	/// - returns: a `DateInRegion` object representing a date that is the earliest from a given
 	///            range of dates.
-	public static func latestDate(_ list: [DateInRegion]) -> DateInRegion {
-		return list.latestDate
+	public static func oldestDate(_ list: [DateInRegion]) -> DateInRegion {
+		return list.oldestDate
 	}
 	
 	
-	/// Returns a DateInRegion object representing a date that is the latest from a given range of
+	/// Returns a DateInRegion object representing a date that is the latest (most recent) from a given range of
 	/// dates. The dates are compared in absolute time, i.e. time zones, locales and calendars have
 	/// no effect on the comparison.
 	///
@@ -527,15 +630,34 @@ extension DateInRegion {
 	///
 	/// - returns: a `DateInRegion` object representing a date that is the latest from a given
 	///     range of dates.
-	public static func earliestDate(_ list: [DateInRegion]) -> DateInRegion {
-		return list.earliestDate
+	public static func recentDate(_ list: [DateInRegion]) -> DateInRegion {
+		return list.recentDate
+	}
+	
+	/// Returns a boolean value that indicates whether the represented date uses daylight saving time.
+	public var isDST: Bool {
+		return self.region.timeZone.isDaylightSavingTime(for: self.absoluteDate)
+	}
+	
+	/// The current daylight saving time offset of the represented date.
+	public var DSTOffset: TimeInterval {
+		return self.region.timeZone.daylightSavingTimeOffset(for: self.absoluteDate)
+	}
+	
+	/// The date of the next daylight saving time transition after currently represented date.
+	/// Date is reported in the same timezone of the receiver.
+	public var nextDSTTransitionDate: DateInRegion? {
+		guard let next_transition = self.region.timeZone.nextDaylightSavingTimeTransition(after: self.absoluteDate) else {
+			return nil
+		}
+		return DateInRegion(absoluteDate: next_transition, in: self.region)
 	}
 }
 
 public extension Array where Element: DateInRegion {
 	
 	/// Get the latest date from a list
-	public var latestDate: DateInRegion {
+	public var recentDate: DateInRegion {
 		var currentMaximum = DateInRegion.distantPast
 		self.forEach { cDate in
 			if currentMaximum < cDate {
@@ -546,7 +668,7 @@ public extension Array where Element: DateInRegion {
 	}
 	
 	/// Get the earliest date from a list
-	public var earliestDate: DateInRegion {
+	public var oldestDate: DateInRegion {
 		var currentMinimum = DateInRegion.distantFuture
 		self.forEach { cDate in
 			if currentMinimum > cDate {
@@ -557,3 +679,4 @@ public extension Array where Element: DateInRegion {
 	}
 	
 }
+
