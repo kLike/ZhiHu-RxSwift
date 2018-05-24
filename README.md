@@ -24,7 +24,7 @@
 - [API](https://github.com/izzyleung/ZhihuDailyPurify/wiki/知乎日报-API-分析): 项目的开始当然是看看有没有API呀，这里要感谢这位通过非正常手段获取API的同学，为我们总结了完整的[知乎日报-API-分析](https://github.com/izzyleung/ZhihuDailyPurify/wiki/知乎日报-API-分析)，我也无私地奉献了star，略表感谢！
 - [Alamofire](https://github.com/Alamofire/Alamofire): Swift版的AFNetworking。
 - [Moya](https://github.com/Moya/Moya): 是 Artsy 团队的 Ash Furrow 主导开发的一个网络抽象层库。它在 Alamofire 基础上提供了一系列简单的抽象接口，让客户端代码不用去直接调用 Alamofire，也不用去关心 NSURLSession。同时提供了很多实用的功能，包括对RxSwift的良好扩展。
-- [HandyJSON](https://github.com/alibaba/HandyJSON): 是一个用于Swift语言中的JSON序列化/反序列化库。与其他流行的Swift JSON库相比，HandyJSON的特点是，它支持纯swift类，使用也简单。它反序列化时(把JSON转换为Model)不要求Model从NSObject继承(因为它不是基于KVC机制)，也不要求你为Model定义一个Mapping函数。只要你定义好Model类，声明它服从HandyJSON协议，HandyJSON就能自行以各个属性的属性名为Key，从JSON串中解析值。HandyJSON目前依赖于从Swift Runtime源码中推断的内存规则，任何变动我们将随时跟进。
+- ~~[HandyJSON](https://github.com/alibaba/HandyJSON): 是一个用于Swift语言中的JSON序列化/反序列化库。与其他流行的Swift JSON库相比，HandyJSON的特点是，它支持纯swift类，使用也简单。它反序列化时(把JSON转换为Model)不要求Model从NSObject继承(因为它不是基于KVC机制)，也不要求你为Model定义一个Mapping函数。只要你定义好Model类，声明它服从HandyJSON协议，HandyJSON就能自行以各个属性的属性名为Key，从JSON串中解析值。HandyJSON目前依赖于从Swift Runtime源码中推断的内存规则，任何变动我们将随时跟进。~~ 替换成 Codable。
 - [RxSwift](https://github.com/ReactiveX/RxSwift): 响应式编程三方库。这里主要处理网络请求时的各种回调和异步线程。
 
 最终实现效果：
@@ -49,15 +49,15 @@ enum ApiManager {
     case getNewsDesc(Int)
 }
 ```
-由于Moya没有支持HandyJSON扩展，这里我自己实现了此扩展：
+由于Moya没有支持Codable扩展，这里我自己实现了此扩展：
 ```
 extension Response {
-    func mapModel<T: HandyJSON>(_ type: T.Type) throws -> T {
-        let jsonString = String.init(data: data, encoding: .utf8)
-        guard let object = JSONDeserializer<T>.deserializeFrom(json: jsonString) else {
+    func mapModel<T: Codable>(_ type: T.Type) throws -> T {
+        do {
+            return try JSONDecoder().decode(type, from: data)
+        } catch {
             throw MoyaError.jsonMapping(self)
         }
-        return object
     }
 }
 
@@ -69,22 +69,22 @@ extension PrimitiveSequence where TraitType == SingleTrait, ElementType == Respo
     }
 }
 ```
-只要Model遵循HandyJSON协议，就能很优雅的快速实现JSON->Model，包括嵌套解析：
+只要Model遵循Codable协议，就能很优雅的快速实现JSON->Model，包括嵌套解析：
 ```
-struct listModel: HandyJSON {
+struct listModel: Codable {
     var date: String?
-    var stories: [storyModel]?
+    var stories: [storyModel]
     var top_stories: [storyModel]?
 }
 
-struct storyModel: HandyJSON {
+struct storyModel: Codable {
     var ga_prefix: String?
     var id: Int?
     var images: [String]? //list_stories
     var title: String?
     var type: Int?
     var image: String? //top_stories
-    var multipic = false
+    var multipic: Bool?
 }
 ```
 可以说，这是迄今为止我最满意的网络请求封装，以后都可以愉快处理请求啦😁
