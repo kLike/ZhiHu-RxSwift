@@ -60,7 +60,7 @@ class ThemeViewController: UIViewController {
             .bind(to: tableView.rx.items(cellIdentifier: "ListTableViewCell", cellType: ListTableViewCell.self)) {
                 row, model, cell in
                 cell.title.text = model.title
-                cell.morepicImg.isHidden = !model.multipic
+                cell.morepicImg.isHidden = !(model.multipic ?? false)
                 if model.images != nil {
                     cell.img.isHidden = false
                     cell.titleRight.constant = 105
@@ -115,7 +115,7 @@ extension ThemeViewController {
             .request(.getThemeDesc(id))
             .mapModel(listModel.self)
             .subscribe(onSuccess: { (model) in
-                self.listModelArr.value = model.stories!
+                self.listModelArr.value = model.stories
                 self.tableView.scrollToRow(at: IndexPath.init(row: 0, section: 0), at: .top, animated: false)
                 self.navigationController?.navigationBar.subviews.first?.alpha = 0
             })

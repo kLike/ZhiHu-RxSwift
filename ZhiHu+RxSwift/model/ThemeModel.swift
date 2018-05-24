@@ -7,14 +7,13 @@
 //
 
 import Foundation
-import HandyJSON
 
-struct ThemeResponseModel: HandyJSON {
+struct ThemeResponseModel: Codable {
     var others: [ThemeModel]?
 }
 
-struct ThemeModel: HandyJSON {
-    var color: String?
+struct ThemeModel: Codable {
+//    var color: String?
     var thumbnail: String?
     var id: Int?
     var description: String?

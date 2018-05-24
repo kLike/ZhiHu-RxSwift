@@ -7,13 +7,12 @@
 //
 
 import Foundation
-import HandyJSON
 
-struct LaunchModel: HandyJSON {
+struct LaunchModel: Codable {
     var creatives: [LaunchModelImg]?
 }
 
-struct LaunchModelImg: HandyJSON {
+struct LaunchModelImg: Codable {
     var url: String?
     var text: String?
     var start_time : Int?

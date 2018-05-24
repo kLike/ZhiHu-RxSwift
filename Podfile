@@ -5,7 +5,6 @@ target 'ZhiHu+RxSwift' do
 pod 'Moya'
 pod 'Moya/RxSwift'
 pod 'Kingfisher'
-pod 'HandyJSON'
 pod 'RxSwift'
 pod 'RxCocoa'
 pod 'RxDataSources'

@@ -1,7 +1,6 @@
 PODS:
   - Alamofire (4.7.2)
   - Differentiator (3.0.2)
-  - HandyJSON (4.1.1)
   - Kingfisher (4.7.0)
   - Moya (11.0.2):
     - Moya/Core (= 11.0.2)
@@ -23,7 +22,6 @@ PODS:
   - Then (2.3.0)
 
 DEPENDENCIES:
-  - HandyJSON
   - Kingfisher
   - Moya
   - Moya/RxSwift
@@ -34,10 +32,9 @@ DEPENDENCIES:
   - Then
 
 SPEC REPOS:
-  https://github.com/CocoaPods/Specs.git:
+  https://github.com/cocoapods/specs.git:
     - Alamofire
     - Differentiator
-    - HandyJSON
     - Kingfisher
     - Moya
     - Result
@@ -50,7 +47,6 @@ SPEC REPOS:
 SPEC CHECKSUMS:
   Alamofire: e4fa87002c137ba2d8d634d2c51fabcda0d5c223
   Differentiator: a87be69eba49ec4ab460c7671143ee3a9eececfd
-  HandyJSON: 3a3de917c4118767ffe41c29b5acba23409649f4
   Kingfisher: da6b005aa96d37698e3e4f1ccfe96a5b9bbf27d6
   Moya: a725035953bc1c0eb1be505ab903984501d82440
   Result: d2d07204ce72856f1fd9130bbe42c35a7b0fea10
@@ -60,6 +56,6 @@ SPEC CHECKSUMS:
   SwiftDate: 7b56d42a221f582047287deb256b23fc5ed49a60
   Then: ee21c97b85ff6062b9b0080c9abb1eea46743345
 
-PODFILE CHECKSUM: 74eeba609fe347a0df0b6f609c574ffa48c5e65d
+PODFILE CHECKSUM: 7237c5882d1866d56bc9bd879baf36617adaf27d
 
-COCOAPODS: 1.5.0
+COCOAPODS: 1.5.2

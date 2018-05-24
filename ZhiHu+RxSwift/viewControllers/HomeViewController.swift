@@ -22,7 +22,7 @@ class HomeViewController: UIViewController {
         let cell = tv.dequeueReusableCell(withIdentifier: "ListTableViewCell") as! ListTableViewCell
         cell.title.text = model.title
         cell.img.kf.setImage(with: URL.init(string: (model.images?.first)!))
-        cell.morepicImg.isHidden = !model.multipic
+        cell.morepicImg.isHidden = !(model.multipic ?? false)
         return cell
     })
     let dispose = DisposeBag()
@@ -126,7 +126,7 @@ extension HomeViewController {
             .request(.getNewsList)
             .mapModel(listModel.self)
             .subscribe(onSuccess: { (model) in
-                self.dataArr.value = [SectionModel(model: model.date!, items: model.stories!)]
+                self.dataArr.value = [SectionModel(model: model.date!, items: model.stories)]
                 self.newsDate = model.date!
                 var arr = model.top_stories!
                 arr.insert(arr.last!, at: 0)
@@ -143,7 +143,7 @@ extension HomeViewController {
             .request(.getMoreNews(newsDate))
             .mapModel(listModel.self)
             .subscribe(onSuccess: { (model) in
-                self.dataArr.value.append(SectionModel(model: model.date!, items: model.stories!))
+                self.dataArr.value.append(SectionModel(model: model.date!, items: model.stories))
                 self.newsDate = model.date!
             })
             .disposed(by: dispose)
