@@ -24,7 +24,7 @@
 - [API](https://github.com/izzyleung/ZhihuDailyPurify/wiki/知乎日报-API-分析): 项目的开始当然是看看有没有API呀，这里要感谢这位通过非正常手段获取API的同学，为我们总结了完整的[知乎日报-API-分析](https://github.com/izzyleung/ZhihuDailyPurify/wiki/知乎日报-API-分析)，我也无私地奉献了star，略表感谢！
 - [Alamofire](https://github.com/Alamofire/Alamofire): Swift版的AFNetworking。
 - [Moya](https://github.com/Moya/Moya): 是 Artsy 团队的 Ash Furrow 主导开发的一个网络抽象层库。它在 Alamofire 基础上提供了一系列简单的抽象接口，让客户端代码不用去直接调用 Alamofire，也不用去关心 NSURLSession。同时提供了很多实用的功能，包括对RxSwift的良好扩展。
-- ~~[HandyJSON](https://github.com/alibaba/HandyJSON): 是一个用于Swift语言中的JSON序列化/反序列化库。与其他流行的Swift JSON库相比，HandyJSON的特点是，它支持纯swift类，使用也简单。它反序列化时(把JSON转换为Model)不要求Model从NSObject继承(因为它不是基于KVC机制)，也不要求你为Model定义一个Mapping函数。只要你定义好Model类，声明它服从HandyJSON协议，HandyJSON就能自行以各个属性的属性名为Key，从JSON串中解析值。HandyJSON目前依赖于从Swift Runtime源码中推断的内存规则，任何变动我们将随时跟进。~~ 替换成 Codable。
+- ~~[HandyJSON](https://github.com/alibaba/HandyJSON): 是一个用于Swift语言中的JSON序列化/反序列化库。与其他流行的Swift JSON库相比，HandyJSON的特点是，它支持纯swift类，使用也简单。它反序列化时(把JSON转换为Model)不要求Model从NSObject继承(因为它不是基于KVC机制)，也不要求你为Model定义一个Mapping函数。只要你定义好Model类，声明它服从HandyJSON协议，HandyJSON就能自行以各个属性的属性名为Key，从JSON串中解析值。HandyJSON目前依赖于从Swift Runtime源码中推断的内存规则，任何变动我们将随时跟进。~~ **替换成 Codable**。
 - [RxSwift](https://github.com/ReactiveX/RxSwift): 响应式编程三方库。这里主要处理网络请求时的各种回调和异步线程。
 
 最终实现效果：
